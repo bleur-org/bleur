@@ -1,0 +1,8 @@
+# Nix builds
+/result
+
+# Cargo builds
+/target
+
+# Direnv
+/.direnv

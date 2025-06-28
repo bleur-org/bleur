@@ -1,0 +1,31 @@
+[package]
+name = "bleur"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+homepage = "https://bleur.net"
+repository = "https://github.com/bleur-org/bleur"
+description = "That buddy that will get everything ready for you"
+authors = ["Sokhibjon Orzikulov <sakhib@orzklv.uz>"]
+
+# Dependencies that will included with final binary
+[dependencies]
+clap = { version = "4.5.40", features = ["derive"] }
+reqwest = "0.12.20"
+serde = { version = "1.0.219", features = ["derive"] }
+tempfile = "3.20.0"
+thiserror = "2.0.12"
+tokio = "1.45.1"
+toml = "0.8.23"
+url = { version = "2.5.4", features = ["serde"] }
+which = "8.0.0"
+
+# Development dependencies which aren't used in release binary
+[dev-dependencies]
+
+# Optimize release binary as much as possible
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+codegen-units = 1
