@@ -7,13 +7,11 @@ pub type Result<T, E = BleurError> = std::result::Result<T, E>;
 pub enum BleurError {
     #[error("can't create temporary directory")]
     TemporaryCantCreate(#[from] std::io::Error),
-    #[error("temporary directory is not created yet")]
-    TemporaryNotCreated,
     #[error("can't parse this shitty url ({0})")]
     CantParseUrl(#[from] url::ParseError),
     #[error("you don't have nix nor git for initialization")]
     NoToolForInit,
-    #[error("we don't have anove of arguments to decide which fetchign scheme to use")]
+    #[error("we don't have enough of arguments to decide which fetching scheme to use")]
     InsufficientArgumentsToDecide,
     #[error("unknown error, probably baba yaga is up to cooking something")]
     Unknown,
