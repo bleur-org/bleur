@@ -1,7 +1,7 @@
 pub mod config;
 pub mod error;
-pub mod fetch;
 pub mod manager;
+pub mod method;
 pub mod schemes;
 
 use clap::{Parser, Subcommand};
@@ -19,14 +19,11 @@ pub struct Cli {
 #[derive(Debug, Subcommand)]
 pub enum Commands {
     /// Start creating new project
-    #[command(arg_required_else_help = true)]
     New {
         /// URL to a repository or nix flake
         /// of template or collection fo templates
-        #[arg(
-            value_name = "URL",
-            default_value_t = String::from("https://github.com/bleur-org/templates")
-        )]
+        #[arg(short, value_name = "URL")]
+        #[clap(default_value = "https://github.com/bleur-org/templates")]
         template: String,
     },
 }

@@ -13,7 +13,9 @@ pub enum BleurError {
     CantParseUrl(#[from] url::ParseError),
     #[error("you don't have nix nor git for initialization")]
     NoToolForInit,
-    #[error("unknown data store error")]
+    #[error("we don't have anove of arguments to decide which fetchign scheme to use")]
+    InsufficientArgumentsToDecide,
+    #[error("unknown error, probably baba yaga is up to cooking something")]
     Unknown,
 }
 
@@ -21,7 +23,7 @@ pub fn beautiful_exit<T>(message: T) -> !
 where
     T: AsRef<str>,
 {
-    println!("{}: {}", "Error:".red(), message.as_ref());
+    eprintln!("{}: {}", "Error:".red(), message.as_ref());
 
     std::process::exit(1)
 }

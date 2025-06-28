@@ -1,4 +1,7 @@
-use crate::{fetch::Fetch, Error, Result};
+use crate::{
+    method::{Fetchable, Method},
+    Error, Result,
+};
 use std::path::Path;
 use tempfile::{tempdir, TempDir};
 use url::Url;
@@ -7,11 +10,11 @@ use url::Url;
 pub struct Manager {
     remote: Url,
     temporary: TempDir,
-    method: Fetch,
+    method: Method,
 }
 
 impl Manager {
-    pub fn new(remote: Url, temporary: TempDir, method: Fetch) -> Self {
+    pub fn new(remote: Url, temporary: TempDir, method: Method) -> Self {
         Self {
             remote,
             temporary,
@@ -35,7 +38,7 @@ impl Manager {
 pub struct ManageBuilder {
     remote: Option<Url>,
     temporary: Option<TempDir>,
-    method: Option<Fetch>,
+    method: Option<Method>,
 }
 
 impl ManageBuilder {
@@ -47,44 +50,51 @@ impl ManageBuilder {
         }
     }
 
-    fn tempdir(&mut self) -> Result<()> {
-        self.temporary = Some(tempdir().map_err(Error::TemporaryCantCreate)?);
-
-        Ok(())
+    pub fn tempdir(self) -> Result<Self> {
+        Ok(Self {
+            remote: self.remote,
+            temporary: Some(tempdir().map_err(Error::TemporaryCantCreate)?),
+            method: self.method,
+        })
     }
 
     pub fn source<T>(self, url: T) -> Result<Self>
     where
         T: AsRef<str>,
     {
-        let remote = match Url::parse(url.as_ref()) {
-            Ok(l) => Some(l),
-            Err(e) => return Err(Error::CantParseUrl(e)),
-        };
-
         Ok(Self {
-            remote,
             temporary: self.temporary,
             method: self.method,
+            remote: match Url::parse(url.as_ref()) {
+                Ok(l) => Some(l),
+                Err(e) => return Err(Error::CantParseUrl(e)),
+            },
         })
     }
 
-    pub fn download(self, method: Option<Fetch>) -> Result<Self> {
+    pub fn fetch_method(self, method: Option<Method>) -> Result<Self> {
+        if self.temporary.is_none() || self.remote.is_none() {
+            return Err(Error::InsufficientArgumentsToDecide);
+        }
+
+        let destination = self.temporary.unwrap();
+
         let method = match method {
             Some(f) => f,
-            None => Fetch::fuck_around()?,
+            None => Method::fuck_around(
+                self.remote.clone().unwrap(),
+                destination.path().to_path_buf(),
+            )?,
         };
 
         Ok(Self {
             method: Some(method),
             remote: self.remote,
-            temporary: self.temporary,
+            temporary: Some(destination),
         })
     }
 
-    pub fn build(mut self) -> Result<Manager> {
-        self.tempdir()?;
-
+    pub fn build(self) -> Result<Manager> {
         Ok(Manager {
             remote: self.remote.unwrap(),
             temporary: self.temporary.unwrap(),
