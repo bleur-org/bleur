@@ -23,7 +23,10 @@ pub enum Commands {
     New {
         /// URL to a repository or nix flake
         /// of template or collection fo templates
-        #[arg(value_name = "URL")]
-        url: String,
+        #[arg(
+            value_name = "URL",
+            default_value_t = String::from("https://github.com/bleur-org/templates")
+        )]
+        template: String,
     },
 }

@@ -10,14 +10,19 @@ authors = ["Sokhibjon Orzikulov <sakhib@orzklv.uz>"]
 
 # Dependencies that will included with final binary
 [dependencies]
-clap = { version = "4.5.40", features = ["derive"] }
-reqwest = "0.12.20"
+owo-colors = { version = "4.2.2", default-features = false, features = [
+  "supports-colors",
+] }
+clap = { version = "4.5.40", features = ["derive", "color", "std"] }
+reqwest = { version = "0.12.4", default-features = false, features = [
+  "blocking",
+] }
 serde = { version = "1.0.219", features = ["derive"] }
 tempfile = "3.20.0"
 thiserror = "2.0.12"
 tokio = "1.45.1"
 toml = "0.8.23"
-url = { version = "2.5.4", features = ["serde"] }
+url = { version = "2.5.4", default-features = false, features = ["serde"] }
 which = "8.0.0"
 
 # Development dependencies which aren't used in release binary

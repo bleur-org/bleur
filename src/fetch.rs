@@ -4,6 +4,7 @@ use which::which;
 
 use crate::{Error, Result};
 
+#[derive(Debug)]
 pub enum Fetch {
     Git,
     Nix,

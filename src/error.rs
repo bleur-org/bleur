@@ -1,3 +1,4 @@
+use owo_colors::OwoColorize;
 use thiserror::Error;
 
 pub type Result<T, E = BleurError> = std::result::Result<T, E>;
@@ -8,7 +9,7 @@ pub enum BleurError {
     TemporaryCantCreate(#[from] std::io::Error),
     #[error("temporary directory is not created yet")]
     TemporaryNotCreated,
-    #[error("can't parse this shitty url")]
+    #[error("can't parse this shitty url ({0})")]
     CantParseUrl(#[from] url::ParseError),
     #[error("you don't have nix nor git for initialization")]
     NoToolForInit,
@@ -20,6 +21,7 @@ pub fn beautiful_exit<T>(message: T) -> !
 where
     T: AsRef<str>,
 {
-    println!("{}", message.as_ref());
+    println!("{}: {}", "Error:".red(), message.as_ref());
+
     std::process::exit(1)
 }

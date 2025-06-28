@@ -3,6 +3,7 @@ use std::path::Path;
 use tempfile::{tempdir, TempDir};
 use url::Url;
 
+#[derive(Debug)]
 pub struct Manager {
     remote: Url,
     temporary: TempDir,
@@ -18,12 +19,19 @@ impl Manager {
         }
     }
 
+    pub fn instantiate(&self) -> Result<()> {
+        self.method
+            .fetch(self.remote.clone(), self.path().to_path_buf())?;
+
+        Ok(())
+    }
+
     pub fn path(&self) -> &Path {
         self.temporary.path()
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct ManageBuilder {
     remote: Option<Url>,
     temporary: Option<TempDir>,
@@ -45,8 +53,11 @@ impl ManageBuilder {
         Ok(())
     }
 
-    pub fn source(self, url: String) -> Result<Self> {
-        let remote = match Url::parse(&url) {
+    pub fn source<T>(self, url: T) -> Result<Self>
+    where
+        T: AsRef<str>,
+    {
+        let remote = match Url::parse(url.as_ref()) {
             Ok(l) => Some(l),
             Err(e) => return Err(Error::CantParseUrl(e)),
         };
