@@ -6,16 +6,12 @@ fn main() -> Result<()> {
 
     match args.command {
         Commands::New { template } => {
-            let builder = manager::ManageBuilder::new()
+            manager::ManageBuilder::new()
                 .source(template)
                 .and_then(|i| i.tempdir())
                 .and_then(|i| i.fetch_method(None))
-                .and_then(|i| i.build());
-
-            let manager = builder.unwrap_or_else(|e| beautiful_exit(e.to_string()));
-
-            manager
-                .instantiate()
+                .and_then(|i| i.build())
+                .and_then(|i| i.instantiate())
                 .unwrap_or_else(|e| beautiful_exit(e.to_string()));
         }
     }
