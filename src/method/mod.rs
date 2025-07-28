@@ -1,5 +1,6 @@
 mod git;
 mod nix;
+mod scheme;
 
 use std::path::PathBuf;
 use url::Url;

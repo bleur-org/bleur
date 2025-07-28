@@ -18,7 +18,8 @@ impl Git {
 impl Fetchable for Git {
     // https://docs.rs/git2/latest/git2/build/struct.RepoBuilder.html
     fn fetch(&self, url: Url, path: PathBuf) -> Result<()> {
-        println!("Downloaded and stored the repo in path");
+        println!("Git mode has been chosen!");
+        println!("{url} & {}", path.to_string_lossy());
 
         Ok(())
     }
