@@ -1,3 +1,4 @@
+use indicatif::style::TemplateError;
 use owo_colors::OwoColorize;
 use thiserror::Error;
 
@@ -19,6 +20,21 @@ pub enum BleurError {
     CommandExecutionFail,
     #[error("failed reading output of nix")]
     NixInvalidOutput(#[from] std::string::FromUtf8Error),
+    #[error("something went wrong while cloning repository from remote: {0}")]
+    CantCloneRepository(#[from] git2::Error),
+    #[error("can't download from given url via http: {0}")]
+    CantDownloadViaHttp(#[from] reqwest::Error),
+    #[error("can't get length of content via http")]
+    CantGetContentLength,
+    #[error("can't create the template of progressbar {0}")]
+    CantInitiateProgressTemplate(#[from] TemplateError),
+    #[error("can't create file to write downloads {0}")]
+    CantCreateFile(String),
+    #[error("can't write to file after downloading")]
+    CantWriteToFile,
+
+    // To be used only if you get despaired.
+    // Until so, don't touch, for the sake of your own sanity!
     #[error("unknown error, probably baba yaga is up to cooking something")]
     Unknown,
 }

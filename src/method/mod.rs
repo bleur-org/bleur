@@ -1,49 +1,34 @@
-mod git;
-mod nix;
-mod scheme;
-
-use std::path::PathBuf;
-use url::Url;
-use which::which;
+pub mod git;
+pub mod http;
 
 use crate::{
-    method::{git::Git, nix::Nix},
-    Error, Result,
+    method::{git::Git, http::Http},
+    Result,
 };
+use std::{future::Future, path::PathBuf};
+use url::Url;
 
 pub trait Fetchable {
-    fn fetch(&self, url: Url, path: PathBuf) -> Result<()>;
+    fn fetch(&self) -> impl Future<Output = Result<()>>;
+}
+
+pub trait Methodical {
+    fn to_method(&self, url: Url, path: PathBuf) -> Method;
 }
 
 #[derive(Debug)]
 pub enum Method {
     Git(Git),
-    Nix(Nix),
+    Http(Http),
 }
 
 impl Fetchable for Method {
-    fn fetch(&self, url: Url, path: PathBuf) -> Result<()> {
+    async fn fetch(&self) -> Result<()> {
         match &self {
-            Self::Nix(n) => n.fetch(url, path),
-            Self::Git(g) => g.fetch(url, path),
+            Self::Http(h) => h.fetch().await,
+            Self::Git(g) => g.fetch().await,
         }?;
 
         Ok(())
-    }
-}
-
-impl Method {
-    pub fn fuck_around(url: Url, path: PathBuf) -> Result<Method> {
-        // Prefer nix whenever possible
-        if which("nix").is_ok() {
-            return Ok(Method::Nix(Nix::new(url, path)));
-        }
-
-        // Git is also fine
-        if which("git").is_ok() {
-            return Ok(Method::Git(Git::new(url, path)));
-        }
-
-        Err(Error::NoToolForInit)
     }
 }

@@ -15,16 +15,19 @@ owo-colors = { version = "4.2.2", default-features = false, features = [
 ] }
 clap = { version = "4.5.40", features = ["derive", "color", "std"] }
 reqwest = { version = "0.12.4", default-features = false, features = [
-  "blocking",
+  "stream",
 ] }
 serde = { version = "1.0.219", features = ["derive"] }
 tempfile = "3.20.0"
 thiserror = "2.0.12"
-tokio = "1.45.1"
+tokio = { version = "1", features = ["full"] }
 toml = "0.8.23"
 url = { version = "2.5.4", default-features = false, features = ["serde"] }
 which = "8.0.0"
 serde_json = "1.0.141"
+git2 = "0.20.2"
+indicatif = "0.18.0"
+tokio-stream = { version = "0.1.17", features = ["full"] }
 
 # Development dependencies which aren't used in release binary
 [dev-dependencies]

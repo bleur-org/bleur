@@ -1,5 +1,5 @@
 use crate::{
-    method::{Fetchable, Method},
+    method::{Fetchable, Method, Methodical},
     Error, Result,
 };
 use std::path::Path;
@@ -22,11 +22,14 @@ impl Manager {
         }
     }
 
-    pub fn instantiate(&self) -> Result<()> {
-        self.method
-            .fetch(self.remote.clone(), self.path().to_path_buf())?;
+    pub async fn instantiate(self) -> Result<Self> {
+        self.method.fetch().await?;
 
-        Ok(())
+        Ok(Self {
+            remote: self.remote,
+            temporary: self.temporary,
+            method: self.method,
+        })
     }
 
     pub fn path(&self) -> &Path {
@@ -72,20 +75,20 @@ impl ManageBuilder {
         })
     }
 
-    pub fn fetch_method(self, method: Option<Method>) -> Result<Self> {
+    pub fn fetch_method<T>(self, method: T) -> Result<Self>
+    where
+        T: Methodical,
+    {
         if self.temporary.is_none() || self.remote.is_none() {
             return Err(Error::InsufficientArgumentsToDecide);
         }
 
         let destination = self.temporary.unwrap();
 
-        let method = match method {
-            Some(f) => f,
-            None => Method::fuck_around(
-                self.remote.clone().unwrap(),
-                destination.path().to_path_buf(),
-            )?,
-        };
+        let method = method.to_method(
+            self.remote.clone().unwrap(),
+            destination.path().to_path_buf(),
+        );
 
         Ok(Self {
             method: Some(method),
@@ -95,10 +98,10 @@ impl ManageBuilder {
     }
 
     pub fn build(self) -> Result<Manager> {
-        Ok(Manager {
-            remote: self.remote.unwrap(),
-            temporary: self.temporary.unwrap(),
-            method: self.method.unwrap(),
-        })
+        Ok(Manager::new(
+            self.remote.unwrap(),
+            self.temporary.unwrap(),
+            self.method.unwrap(),
+        ))
     }
 }

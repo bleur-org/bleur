@@ -1,7 +1,9 @@
+use crate::error::{BleurError, Result};
+use git2::{build::RepoBuilder, FetchOptions};
 use std::path::PathBuf;
 use url::Url;
 
-use crate::{method::Fetchable, Result};
+use crate::method::Fetchable;
 
 #[derive(Debug)]
 pub struct Git {
@@ -17,10 +19,14 @@ impl Git {
 
 impl Fetchable for Git {
     // https://docs.rs/git2/latest/git2/build/struct.RepoBuilder.html
-    fn fetch(&self, url: Url, path: PathBuf) -> Result<()> {
-        println!("Git mode has been chosen!");
-        println!("{url} & {}", path.to_string_lossy());
+    async fn fetch(&self) -> Result<()> {
+        let mut options = FetchOptions::new();
+        options.depth(1);
 
-        Ok(())
+        RepoBuilder::new()
+            .fetch_options(options)
+            .clone(self.url.as_str(), self.path.as_path())
+            .map(|_| ())
+            .map_err(BleurError::CantCloneRepository)
     }
 }
