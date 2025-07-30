@@ -63,7 +63,7 @@ pub enum Commands {
 
         /// Chosen method of fetching repository
         #[arg(short, long)]
-        #[clap(default_value_t = Protocol::Http)]
+        #[clap(default_value_t = Protocol::Git)]
         method: Protocol,
     },
 }

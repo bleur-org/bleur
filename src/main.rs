@@ -1,5 +1,7 @@
 #![allow(unused_variables)]
 
+use std::env::current_dir;
+
 use bleur::*;
 use clap::Parser;
 
@@ -21,7 +23,13 @@ async fn run() -> Result<()> {
             path,
             method,
         } => {
-            let manager = manager::ManageBuilder::new()
+            let path = path.unwrap_or(current_dir()?);
+
+            dbg!(&template);
+            dbg!(&path.to_string_lossy());
+            dbg!(&method);
+
+            manager::ManageBuilder::new()
                 .source(template)
                 .and_then(|i| i.tempdir())
                 .and_then(|i| i.fetch_method(method))

@@ -15,11 +15,8 @@ impl Git {
     pub fn new(url: Url, path: PathBuf) -> Self {
         Self { url, path }
     }
-}
 
-impl Fetchable for Git {
-    // https://docs.rs/git2/latest/git2/build/struct.RepoBuilder.html
-    async fn fetch(&self) -> Result<()> {
+    async fn clone(&self) -> Result<()> {
         let mut options = FetchOptions::new();
         options.depth(1);
 
@@ -27,6 +24,20 @@ impl Fetchable for Git {
             .fetch_options(options)
             .clone(self.url.as_str(), self.path.as_path())
             .map(|_| ())
-            .map_err(BleurError::CantCloneRepository)
+            .map_err(BleurError::CantCloneRepository)?;
+
+        std::fs::remove_dir_all(self.path.as_path().join(".git"))
+            .map_err(|_| BleurError::CantDeleteGitDirectorty)?;
+
+        Ok(())
+    }
+}
+
+impl Fetchable for Git {
+    // https://docs.rs/git2/latest/git2/build/struct.RepoBuilder.html
+    async fn fetch(&self) -> Result<()> {
+        self.clone().await?;
+
+        Ok(())
     }
 }

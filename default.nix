@@ -41,28 +41,17 @@ in
     # Compile time dependencies
     nativeBuildInputs = with pkgs; [
       # GCC toolchain
-      gcc
-      gnumake
       pkg-config
-
-      # LLVM toolchain
-      cmake
-      llvmPackages.llvm
-      llvmPackages.clang
-
-      # Rust
-      rustc
-      cargo
-      clippy
 
       # Other compile time dependencies
       # here
+      openssl
     ];
 
     # Runtime dependencies which will be shipped
     # with nix package
     buildInputs = with pkgs; [
-      # openssl
+      openssl
       # libressl
     ];
 
@@ -81,9 +70,8 @@ in
     meta = with lib; {
       homepage = manifest.homepage;
       description = manifest.description;
-      # https://github.com/NixOS/nixpkgs/blob/master/lib/licenses.nix
       license = with lib.licenses; [asl20 mit];
       platforms = with platforms; linux ++ darwin;
-      maintainers = [lib.maintainers.orzklv];
+      maintainers = with lib.maintainers; [orzklv];
     };
   }

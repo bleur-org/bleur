@@ -23,14 +23,7 @@ in
     # Compile time dependencies
     nativeBuildInputs = with pkgs; [
       # GCC toolchain
-      gcc
-      gnumake
       pkg-config
-
-      # LLVM toolchain
-      cmake
-      llvmPackages.llvm
-      llvmPackages.clang
 
       # Hail the Nix
       nixd
@@ -48,12 +41,13 @@ in
 
       # Other compile time dependencies
       # here
+      openssl
     ];
 
     # Runtime dependencies which will be in present
     # after activation
     buildInputs = with pkgs; [
-      # openssl
+      openssl
       # libressl
     ];
 

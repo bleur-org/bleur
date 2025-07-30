@@ -1,4 +1,3 @@
-use indicatif::style::TemplateError;
 use owo_colors::OwoColorize;
 use thiserror::Error;
 
@@ -26,12 +25,12 @@ pub enum BleurError {
     CantDownloadViaHttp(#[from] reqwest::Error),
     #[error("can't get length of content via http")]
     CantGetContentLength,
-    #[error("can't create the template of progressbar {0}")]
-    CantInitiateProgressTemplate(#[from] TemplateError),
     #[error("can't create file to write downloads {0}")]
     CantCreateFile(String),
     #[error("can't write to file after downloading")]
     CantWriteToFile,
+    #[error("can't delete .git directory after cloning")]
+    CantDeleteGitDirectorty,
 
     // To be used only if you get despaired.
     // Until so, don't touch, for the sake of your own sanity!
@@ -43,7 +42,7 @@ pub fn beautiful_exit<T>(message: T) -> !
 where
     T: AsRef<str>,
 {
-    eprintln!("{}: {}", "error:".red(), message.as_ref());
+    eprintln!("{} {}", "error:".red(), message.as_ref());
 
     std::process::exit(1)
 }
