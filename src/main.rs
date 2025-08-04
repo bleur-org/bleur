@@ -1,9 +1,8 @@
 #![allow(unused_variables)]
 
-use std::env::current_dir;
-
 use bleur::*;
 use clap::Parser;
+use std::env::current_dir;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -36,6 +35,9 @@ async fn run() -> Result<()> {
                 .and_then(|i| i.build())?
                 .instantiate()
                 .await?;
+
+            // Use this in case you need to observe temporary file/folder.
+            // tokio::time::sleep(Duration::from_secs(1000000000)).await;
         }
     }
 
