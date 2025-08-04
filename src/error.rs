@@ -29,6 +29,10 @@ pub enum BleurError {
     CantCreateFile(String),
     #[error("can't write to file after downloading")]
     CantWriteToFile,
+    #[error("can't unzip downloaded zip file: {0}")]
+    CantUnArchiveZip(#[from] zip::result::ZipError),
+    #[error("can't delete downloaded archive from archived directory")]
+    CantDeleteOldArchive,
     #[error("can't delete .git directory after cloning")]
     CantDeleteGitDirectorty,
 
