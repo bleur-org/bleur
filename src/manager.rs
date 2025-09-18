@@ -1,5 +1,6 @@
 use crate::{
     method::{Fetchable, Method, Methodical},
+    schemes::Configuration,
     Error, Result,
 };
 use std::path::Path;
@@ -11,6 +12,7 @@ pub struct Manager {
     remote: Url,
     temporary: TempDir,
     method: Method,
+    template: Configuration,
 }
 
 impl Manager {
@@ -19,6 +21,7 @@ impl Manager {
             remote,
             temporary,
             method,
+            template: Default::default(),
         }
     }
 
@@ -29,6 +32,22 @@ impl Manager {
             remote: self.remote,
             temporary: self.temporary,
             method: self.method,
+            template: self.template,
+        })
+    }
+
+    pub fn parse(self) -> Result<Self> {
+        let templates = Configuration::parse(self.temporary.path().to_path_buf());
+
+        if let Configuration::Empty = templates {
+            return Err(Error::NoTemplateConfiguration);
+        }
+
+        Ok(Self {
+            remote: self.remote,
+            temporary: self.temporary,
+            method: self.method,
+            template: templates,
         })
     }
 

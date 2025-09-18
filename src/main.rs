@@ -34,10 +34,14 @@ async fn run() -> Result<()> {
                 .and_then(|i| i.fetch_method(method))
                 .and_then(|i| i.build())?
                 .instantiate()
-                .await?;
+                .await?
+                .parse()?;
 
             // Use this in case you need to observe temporary file/folder.
             // tokio::time::sleep(Duration::from_secs(1000000000)).await;
+        }
+        Commands::Test {} => {
+            println!("Test call has been completed and reached end successfully!");
         }
     }
 

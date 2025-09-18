@@ -66,4 +66,7 @@ pub enum Commands {
         #[clap(default_value_t = Protocol::Git)]
         method: Protocol,
     },
+
+    /// To test things out and see how it goes
+    Test {},
 }
