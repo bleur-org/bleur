@@ -11,7 +11,7 @@ pub enum Configuration {
     Template(Template),
 
     // If repo contains collection of templates
-    Collection(Collections),
+    Collections(Collections),
 
     // If repo doesn't have any configuration
     #[default]
@@ -35,10 +35,11 @@ impl Configuration {
 
             // And if it's parsible to Collection type
             if let Ok(c) = toml::from_str::<Collections>(&text) {
-                return Configuration::Collection(c);
+                return Configuration::Collections(c);
             }
         };
 
+        // Nothing's there + invalid config file
         Self::Empty
     }
 }
