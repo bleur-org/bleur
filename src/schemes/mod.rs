@@ -1,12 +1,8 @@
 pub mod collection;
 pub mod template;
 
-use std::{
-    fs,
-    path::{Path, PathBuf},
-};
-
 use crate::schemes::{collection::Collections, template::Template};
+use std::path::{Path, PathBuf};
 
 #[derive(Debug, Default)]
 pub enum Configuration {
