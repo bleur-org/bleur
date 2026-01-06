@@ -37,6 +37,10 @@ pub enum BleurError {
     NoTemplateConfiguration,
     #[error("can't delete .git directory after cloning")]
     CantDeleteGitDirectorty,
+    #[error("can't read/parse user prompt")]
+    CantParseUserPrompt(#[from] inquire::InquireError),
+    #[error("no such template in the collection")]
+    NoSuchTemplateInCollection,
 
     // To be used only if you get despaired.
     // Until so, don't touch, for the sake of your own sanity!

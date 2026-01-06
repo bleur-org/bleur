@@ -37,17 +37,13 @@ impl Manager {
     }
 
     pub fn parse(self) -> Result<Self> {
-        let templates = Configuration::parse(self.temporary.path().to_path_buf());
-
-        if let Configuration::Empty = templates {
-            return Err(Error::NoTemplateConfiguration);
-        }
+        let template = Configuration::surely_template(self.temporary.path().to_path_buf())?;
 
         Ok(Self {
+            template,
             remote: self.remote,
             temporary: self.temporary,
             method: self.method,
-            template: templates,
         })
     }
 

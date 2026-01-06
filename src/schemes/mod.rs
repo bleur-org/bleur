@@ -2,6 +2,7 @@ pub mod collection;
 pub mod template;
 
 use crate::schemes::{collection::Collections, template::Template};
+use crate::{Error, Result};
 use std::fs;
 use std::path::PathBuf;
 
@@ -19,8 +20,8 @@ pub enum Configuration {
 }
 
 impl Configuration {
-    pub fn parse(temp: PathBuf) -> Self {
-        let config = Some(temp)
+    pub fn parse(path: PathBuf) -> Self {
+        let config = Some(path)
             .filter(|p| p.exists())
             .map(|p| p.join("bleur.toml"))
             .filter(|p| p.exists())
@@ -41,5 +42,26 @@ impl Configuration {
 
         // Nothing's there + invalid config file
         Self::Empty
+    }
+
+    pub fn surely_template(path: PathBuf) -> Result<Self> {
+        use Configuration::*;
+
+        match Self::parse(path.clone()) {
+            Template(t) => Ok(Self::Template(t)),
+            Empty => Err(Error::NoTemplateConfiguration),
+            Collections(c) => {
+                let option = inquire::Select::new(
+                    "Choose the template you would like to bootstrap:",
+                    c.keys(),
+                )
+                .prompt()
+                .map_err(Error::CantParseUserPrompt)?;
+
+                let option = c.select(option).ok_or(Error::NoSuchTemplateInCollection)?;
+
+                Self::surely_template(option.path(path))
+            }
+        }
     }
 }
