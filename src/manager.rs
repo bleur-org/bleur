@@ -39,6 +39,8 @@ impl Manager {
     pub fn parse(self) -> Result<Self> {
         let template = Configuration::surely_template(self.temporary.path().to_path_buf())?;
 
+        dbg!("{}", &template);
+
         Ok(Self {
             template,
             remote: self.remote,
