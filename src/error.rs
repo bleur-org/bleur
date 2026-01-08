@@ -1,23 +1,7 @@
-#![allow(async_fn_in_trait)]
-
 use owo_colors::OwoColorize;
 use thiserror::Error;
 
 pub type Result<T, E = BleurError> = std::result::Result<T, E>;
-
-pub trait AsyncResult<T, E> {
-    async fn and_then_async<U, F: AsyncFnOnce(T) -> Result<U, E>>(self, op: F) -> Result<U, E>;
-}
-
-impl<T, E> AsyncResult<T, E> for std::result::Result<T, E> {
-    #[inline]
-    async fn and_then_async<U, F: AsyncFnOnce(T) -> Result<U, E>>(self, op: F) -> Result<U, E> {
-        match self {
-            Ok(t) => op(t).await,
-            Err(e) => Err(e),
-        }
-    }
-}
 
 #[derive(Error, Debug)]
 pub enum BleurError {

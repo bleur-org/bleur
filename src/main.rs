@@ -28,13 +28,18 @@ async fn run() -> Result<()> {
             dbg!(&path.to_string_lossy());
             dbg!(&method);
 
-            manager::ManageBuilder::new()
+            let manager = manager::ManageBuilder::new()
                 .source(template)
                 .and_then(|mb| mb.tempdir())
                 .and_then(|mb| mb.fetch_method(method))
-                .and_then(|mb| mb.build())
-                .and_then_async(async |mb| mb.instantiate().await)
-                .await
+                .and_then(|mb| mb.build())?
+                .instantiate()
+                .await?;
+
+            dbg!(&manager);
+
+            manager
+                .parse()
                 .and_then(|m| m.evaluate())
                 .and_then(|m| m.recursively_copy())?;
 
