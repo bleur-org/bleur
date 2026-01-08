@@ -21,7 +21,7 @@ pub enum Configuration {
 
 impl Configuration {
     pub fn parse(path: PathBuf) -> Self {
-        let config = Some(path)
+        let config = Some(path.clone())
             .filter(|p| p.exists())
             .map(|p| p.join("bleur.toml"))
             .filter(|p| p.exists())
@@ -31,7 +31,7 @@ impl Configuration {
         if let Some(text) = config {
             // And if it's parsible to Template type
             if let Ok(t) = toml::from_str::<Template>(&text) {
-                return Configuration::Template(t);
+                return Configuration::Template(t.with_path(path));
             }
 
             // And if it's parsible to Collection type
