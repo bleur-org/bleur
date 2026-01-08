@@ -7,7 +7,7 @@ pub mod method;
 pub mod schemes;
 
 use clap::{Parser, Subcommand, ValueEnum};
-pub use error::{beautiful_exit, BleurError as Error, Result};
+pub use error::{beautiful_exit, AsyncResult, BleurError as Error, Result};
 use method::{git::Git, http::Http, Method};
 use std::path::PathBuf;
 use url::Url;

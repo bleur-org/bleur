@@ -1,12 +1,12 @@
-pub mod collection;
+pub mod collections;
 pub mod template;
 
-use crate::schemes::{collection::Collections, template::Template};
+use crate::schemes::{collections::Collections, template::Template};
 use crate::{Error, Result};
 use std::fs;
 use std::path::PathBuf;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub enum Configuration {
     // If repo is a single template
     Template(Template),

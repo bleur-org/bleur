@@ -1,25 +1,11 @@
-use crate::{execute::Executor, Result};
+pub mod project;
+pub mod variable;
+
+use crate::execute::Executor;
+use project::Project;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Project {
-    name: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Variable {
-    placeholder: String,
-    types: String,
-    default: String,
-    source: String,
-}
-
-impl Variable {
-    pub fn execute(&self) -> Result<()> {
-        Ok(())
-    }
-}
+use variable::Variable;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Template {
@@ -45,8 +31,8 @@ impl Template {
         &self.path
     }
 
-    pub fn variables(self) -> Vec<Variable> {
-        self.variables
+    pub fn variables(&self) -> &Vec<Variable> {
+        &self.variables
     }
 
     pub fn computable(self) -> Executor {

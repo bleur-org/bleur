@@ -48,8 +48,14 @@ impl Manager {
         })
     }
 
-    pub fn evaluate(self) -> Result<()> {
-        self.template.template()?.computable().compute()
+    pub fn evaluate(self) -> Result<Self> {
+        self.template.clone().template()?.computable().compute()?;
+
+        Ok(self)
+    }
+
+    pub fn recursively_copy(self) -> Result<Self> {
+        Ok(self)
     }
 }
 

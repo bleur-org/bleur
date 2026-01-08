@@ -30,13 +30,13 @@ async fn run() -> Result<()> {
 
             manager::ManageBuilder::new()
                 .source(template)
-                .and_then(|i| i.tempdir())
-                .and_then(|i| i.fetch_method(method))
-                .and_then(|i| i.build())?
-                .instantiate()
-                .await?
-                .parse()?
-                .evaluate()?;
+                .and_then(|mb| mb.tempdir())
+                .and_then(|mb| mb.fetch_method(method))
+                .and_then(|mb| mb.build())
+                .and_then_async(async |mb| mb.instantiate().await)
+                .await
+                .and_then(|m| m.evaluate())
+                .and_then(|m| m.recursively_copy())?;
 
             // Use this in case you need to observe temporary file/folder.
             // tokio::time::sleep(Duration::from_secs(1000000000)).await;
