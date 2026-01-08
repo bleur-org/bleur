@@ -1,6 +1,6 @@
-use std::path::PathBuf;
-
+use crate::{execute::Executor, Result};
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Project {
@@ -13,6 +13,12 @@ pub struct Variable {
     types: String,
     default: String,
     source: String,
+}
+
+impl Variable {
+    pub fn execute(&self) -> Result<()> {
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -37,5 +43,13 @@ impl Template {
 
     pub fn path(&self) -> &PathBuf {
         &self.path
+    }
+
+    pub fn variables(self) -> Vec<Variable> {
+        self.variables
+    }
+
+    pub fn computable(self) -> Executor {
+        Executor::consume(self)
     }
 }

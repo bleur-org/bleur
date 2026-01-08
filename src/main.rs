@@ -35,7 +35,8 @@ async fn run() -> Result<()> {
                 .and_then(|i| i.build())?
                 .instantiate()
                 .await?
-                .parse()?;
+                .parse()?
+                .evaluate()?;
 
             // Use this in case you need to observe temporary file/folder.
             // tokio::time::sleep(Duration::from_secs(1000000000)).await;

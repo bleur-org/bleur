@@ -3,7 +3,6 @@ use crate::{
     schemes::Configuration,
     Error, Result,
 };
-use std::path::Path;
 use tempfile::{tempdir, TempDir};
 use url::Url;
 
@@ -49,8 +48,8 @@ impl Manager {
         })
     }
 
-    pub fn path(&self) -> &Path {
-        self.temporary.path()
+    pub fn evaluate(self) -> Result<()> {
+        self.template.template()?.computable().compute()
     }
 }
 

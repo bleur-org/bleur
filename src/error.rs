@@ -41,6 +41,8 @@ pub enum BleurError {
     CantParseUserPrompt(#[from] inquire::InquireError),
     #[error("no such template in the collection")]
     NoSuchTemplateInCollection,
+    #[error("during the process, bleur validated an invalid template. please, report about it at https://github.com/bleur-org/bleur/issues")]
+    TemplateIsInvalid,
 
     // To be used only if you get despaired.
     // Until so, don't touch, for the sake of your own sanity!
