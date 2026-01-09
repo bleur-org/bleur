@@ -133,8 +133,6 @@ impl Manager {
     }
 
     pub fn recursively_copy(self, destination: PathBuf) -> Result<Self> {
-        dbg!(&self.globals);
-
         CopyBuilder::new(self.template.clone().template()?.path(), destination)
             .overwrite(true)
             .overwrite_if_newer(true)
