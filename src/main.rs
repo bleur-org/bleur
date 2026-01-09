@@ -2,10 +2,13 @@
 
 use bleur::*;
 use clap::Parser;
+use log::debug;
 use std::env::current_dir;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    env_logger::init();
+
     run()
         .await
         .unwrap_or_else(|e| beautiful_exit(e.to_string()));
@@ -24,9 +27,9 @@ async fn run() -> Result<()> {
         } => {
             let path = path.unwrap_or(current_dir()?);
 
-            dbg!(&template);
-            dbg!(&path.to_string_lossy());
-            dbg!(&method);
+            debug!("{:?}", &template);
+            debug!("{:?}", &path.to_string_lossy());
+            debug!("{:?}", &method);
 
             let manager = manager::ManageBuilder::new()
                 .source(template)
@@ -36,7 +39,7 @@ async fn run() -> Result<()> {
                 .instantiate()
                 .await?;
 
-            dbg!(&manager);
+            debug!("{:?}", &manager);
 
             manager
                 .parse()

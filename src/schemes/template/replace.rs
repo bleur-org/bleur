@@ -3,11 +3,12 @@ use crate::{
     Result,
 };
 use serde::{Deserialize, Serialize};
+use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Replace {
-    from: String,
-    to: String,
+    from: PathBuf,
+    to: PathBuf,
 }
 
 impl Replace {
@@ -17,7 +18,10 @@ impl Replace {
 }
 
 impl ToTask for Replace {
-    fn to_task(self) -> Task {
-        Task::Move(self)
+    fn to_task(self, path: &Path) -> Task {
+        Task::Move(Replace {
+            from: path.join(self.from),
+            to: path.join(self.to),
+        })
     }
 }

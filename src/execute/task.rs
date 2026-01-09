@@ -1,9 +1,9 @@
-use crate::schemes::template::replace::Replace;
-use crate::schemes::template::variable::Variable;
+use crate::schemes::template::{replace::Replace, variable::Variable};
 use crate::Result;
+use std::path::Path;
 
 pub trait ToTask {
-    fn to_task(self) -> Task;
+    fn to_task(self, path: &Path) -> Task;
 }
 
 #[derive(PartialEq, Eq)]

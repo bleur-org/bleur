@@ -6,6 +6,7 @@ use crate::{
     Error, Result,
 };
 use dircpy::CopyBuilder;
+use log::debug;
 use tempfile::{tempdir, TempDir};
 use url::Url;
 
@@ -110,7 +111,7 @@ impl Manager {
     pub fn parse(self) -> Result<Self> {
         let template = Configuration::surely_template(self.temporary.path().to_path_buf())?;
 
-        dbg!("{}", &template);
+        debug!("{:?}", &template);
 
         Ok(Self {
             template,

@@ -57,7 +57,7 @@ impl Template {
         tasks.extend(
             self.variables
                 .iter()
-                .map(|v| v.to_owned().to_task())
+                .map(|v| v.to_owned().to_task(&self.path))
                 .collect::<Vec<Task>>(),
         );
 
@@ -65,7 +65,7 @@ impl Template {
         tasks.extend(
             self.replaces
                 .iter()
-                .map(|v| v.to_owned().to_task())
+                .map(|v| v.to_owned().to_task(&self.path))
                 .collect::<Vec<Task>>(),
         );
 
