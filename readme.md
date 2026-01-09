@@ -1,9 +1,16 @@
-# Rust Nix Template
+<p align="center">
+    <img src=".github/assets/header.png" alt="Bleur's {Buddy}">
+</p>
 
-This is a starter pack for Nix friendly Rust project ecosystem provided to you by [Bleur Stack] developers.
-The project uses rust toolchain derived from nixpkgs to fetch necessary tools and then compile your binary.
+<p align="center">
+    <h3 align="center">Template manager & buddy for bleur-org/templates.</h3>
+</p>
 
-> Please, after bootstrapping, rename / change all `example` or `template` keywords in template files.
+<p align="center">
+    <img align="center" src="https://img.shields.io/github/languages/top/bleur-org/bleur?style=flat&logo=rust&logoColor=000000&labelColor=ffffff&color=ffffff" alt="Top Used Language">
+</p>
+
+This is template manager/assistant for creating/managing your own tempalte or bootstrapping a project using ready-to-go templates from remote. Also, this project itself was bootstrapped using Bleur's templates!
 
 ## Development
 
@@ -55,7 +62,7 @@ Or, you can build your project via nix which will do all the dirty work for you.
 nix build
 
 # Executable binary is available at:
-./result/bin/template
+./result/bin/bleur
 ```
 
 ## FAQ
@@ -66,4 +73,17 @@ There's been cases when I wanted to reproduce totally different behaviors in dev
 production build. This occurs quite a lot lately for some reason and because of that, I tend to keep
 both shell.nix and default.nix to don't mix things up.
 
-[Bleur Stack]: https://github.com/bleur-org
+## Thanks
+
+- [Orzklv](https://github.com/orzklv) - For starting/maintaining.
+- [Kei](https://github.com/thelissimus) - For helping with structure.
+- [Let-rec](https://github.com/let-rec) - For improvements/contributions.
+- [Orzklv's Vocaloid Playlist](https://music.apple.com/gb/playlist/vocaloid-songs/pl.u-GgA5YE5io7P71kE) - For keeping my (orzklv's) sanity.
+
+## License
+
+This project is dual licensed under the MIT License and Apache-2.0 - see the [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE) files for details.
+
+<p align="center">
+    <img src=".github/assets/footer.png" alt="Bleur's {Buddy}">
+</p>
