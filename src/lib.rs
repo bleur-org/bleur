@@ -69,7 +69,7 @@ pub enum Commands {
         method: Protocol,
     },
 
-    /// Bootstrap a bleur toml file for creating a new template
+    /// Bootstrap a bleur toml file for a new template
     Init,
 
     /// To test things out and see how it goes
