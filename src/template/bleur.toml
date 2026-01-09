@@ -1,0 +1,9 @@
+[project]
+name = "example"
+
+[[variables]]
+placeholder = "#example#" # A string to detect and replace to
+types = "string" # Validator
+default = "project" # Default value to replace to
+source = "Cargo.toml" # Source to file where string should be found
+message = "What would you like to name this project?" # Message to ask from user for prompt

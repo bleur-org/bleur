@@ -1,5 +1,3 @@
-# Either have nixpkgs and fenix in your channels
-# Or build it using flakes, flake way is more recommended!
 {
   pkgs ? let
     lock = (builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked;
@@ -12,7 +10,7 @@
   ...
 }: let
   # Helpful nix function
-  lib = pkgs.lib;
+  inherit (pkgs) lib;
   getLibFolder = pkg: "${pkg}/lib";
 
   # Manifest via Cargo.toml
@@ -23,20 +21,11 @@ in
     # obtained from Cargo.toml, so you don't
     # have to do everything manually
     pname = manifest.name;
-    version = manifest.version;
+    inherit (manifest) version;
 
     # Your govnocodes
     src = pkgs.lib.cleanSource ./.;
-
-    cargoLock = {
-      lockFile = ./Cargo.lock;
-      # Use this if you have dependencies from git instead
-      # of crates.io in your Cargo.toml
-      # outputHashes = {
-      #   # Sha256 of the git repository, doesn't matter if it's monorepo
-      #   "example-0.1.0" = "sha256-80EwvwMPY+rYyti8DMG4hGEpz/8Pya5TGjsbOBF0P0c=";
-      # };
-    };
+    cargoLock.lockFile = ./Cargo.lock;
 
     # Compile time dependencies
     nativeBuildInputs = with pkgs; [
@@ -50,10 +39,7 @@ in
 
     # Runtime dependencies which will be shipped
     # with nix package
-    buildInputs = with pkgs; [
-      openssl
-      # libressl
-    ];
+    buildInputs = with pkgs; [openssl];
 
     # Set Environment Variables
     RUST_BACKTRACE = 1;
@@ -62,9 +48,7 @@ in
     # Compiler LD variables
     NIX_LDFLAGS = "-L${(getLibFolder pkgs.libiconv)}";
     LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
-      pkgs.gcc
       pkgs.libiconv
-      pkgs.llvmPackages.llvm
     ];
 
     meta = with lib; {

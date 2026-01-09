@@ -1,5 +1,3 @@
-# Either have nixpkgs and fenix in your channels
-# Or build it using flakes, flake way is more recommended!
 {
   pkgs ? let
     lock = (builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked;
@@ -37,7 +35,6 @@ in
       rustfmt
       clippy
       rust-analyzer
-      cargo-watch
 
       # Other compile time dependencies
       # here
@@ -59,12 +56,11 @@ in
     # > Make sure packages have /lib or /include path'es
     NIX_LDFLAGS = "-L${(getLibFolder pkgs.libiconv)}";
     LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
-      pkgs.gcc
       pkgs.libiconv
-      pkgs.llvmPackages.llvm
     ];
 
     shellHook = ''
       # Extra steps to do while activating development shell
+      rm -rf ./test && mkdir -p ./test
     '';
   }

@@ -6,13 +6,14 @@ pub mod manager;
 pub mod method;
 pub mod schemes;
 
+use crate::method::Methodical;
 use clap::{Parser, Subcommand, ValueEnum};
 pub use error::{beautiful_exit, BleurError as Error, Result};
 use method::{git::Git, http::Http, Method};
 use std::path::PathBuf;
 use url::Url;
 
-use crate::method::Methodical;
+pub static TEMPLATE: &str = include_str!("./template/bleur.toml");
 
 #[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Protocol {
@@ -68,6 +69,9 @@ pub enum Commands {
         method: Protocol,
     },
 
+    /// Bootstrap a bleur toml file for creating a new template
+    Init,
+
     /// To test things out and see how it goes
-    Test {},
+    Test,
 }

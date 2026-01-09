@@ -3,7 +3,7 @@
 use bleur::*;
 use clap::Parser;
 use log::debug;
-use std::env::current_dir;
+use std::{env::current_dir, fs::File, io::Write};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -50,7 +50,12 @@ async fn run() -> Result<()> {
             // Use this in case you need to observe temporary file/folder.
             // tokio::time::sleep(Duration::from_secs(1000000000)).await;
         }
-        Commands::Test {} => {
+        Commands::Init => {
+            let path = current_dir()?;
+            let mut file = File::create(path.join("bleur.toml"))?;
+            file.write_all(TEMPLATE.as_bytes())?;
+        }
+        Commands::Test => {
             println!("Test call has been completed and reached end successfully!");
         }
     }
