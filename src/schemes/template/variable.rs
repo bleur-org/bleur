@@ -4,6 +4,7 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 use std::{
+    collections::HashMap,
     fs::{self, OpenOptions},
     io::Write,
     path::{Path, PathBuf},
@@ -15,16 +16,27 @@ pub struct Variable {
     message: String,
     types: String,
     default: String,
+
+    /// Where the file is located
     source: PathBuf,
+
+    /// Variable to make use of in names of files while moving
+    /// Defaults to placeholder if None passed
+    variable: Option<String>,
 }
 
 impl Variable {
-    pub fn execute(&self) -> Result<()> {
+    pub fn execute(&self, global: &mut HashMap<String, String>) -> Result<()> {
         let prompt = inquire::Text::new(&self.message)
             .with_default(&self.default)
             .with_placeholder(&self.default)
             .prompt()
             .map_err(Error::CantParseUserPrompt)?;
+
+        // Pick variable name or default to placeholder
+        let key = self.variable.as_ref().unwrap_or(&self.placeholder);
+
+        global.insert(key.clone(), prompt.clone());
 
         let contents = fs::read_to_string(self.source.clone())?.replace(&self.placeholder, &prompt);
 
@@ -47,6 +59,7 @@ impl ToTask for Variable {
             types: self.types,
             default: self.default,
             source: path.join(self.source),
+            variable: self.variable,
         })
     }
 }

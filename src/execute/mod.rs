@@ -1,5 +1,7 @@
 pub mod task;
 
+use std::collections::HashMap;
+
 use crate::{execute::task::Task, schemes::template::Template, Result};
 
 pub struct Executor {
@@ -13,7 +15,9 @@ impl Executor {
         }
     }
 
-    pub fn compute(self) -> Result<()> {
-        self.tasks.iter().try_for_each(|t| t.to_owned().execute())
+    pub fn compute(self, global: &mut HashMap<String, String>) -> Result<()> {
+        self.tasks
+            .iter()
+            .try_for_each(|t| t.to_owned().execute(global))
     }
 }

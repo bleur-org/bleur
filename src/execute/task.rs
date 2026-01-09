@@ -1,5 +1,6 @@
 use crate::schemes::template::{replace::Replace, variable::Variable};
 use crate::Result;
+use std::collections::HashMap;
 use std::path::Path;
 
 pub trait ToTask {
@@ -16,10 +17,10 @@ pub enum Task {
 }
 
 impl Task {
-    pub fn execute(&self) -> Result<()> {
+    pub fn execute(&self, global: &mut HashMap<String, String>) -> Result<()> {
         match self {
-            Self::Rename(v) => v.execute(),
-            Self::Move(r) => r.execute(),
+            Self::Rename(v) => v.execute(global),
+            Self::Move(r) => r.execute(global),
         }
     }
 

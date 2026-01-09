@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{collections::HashMap, path::PathBuf};
 
 use crate::{
     method::{Fetchable, Method, Methodical},
@@ -84,6 +84,7 @@ pub struct Manager {
     temporary: TempDir,
     method: Method,
     template: Configuration,
+    globals: HashMap<String, String>,
 }
 
 impl Manager {
@@ -93,6 +94,7 @@ impl Manager {
             temporary,
             method,
             template: Default::default(),
+            globals: HashMap::default(),
         }
     }
 
@@ -104,6 +106,7 @@ impl Manager {
             temporary: self.temporary,
             method: self.method,
             template: self.template,
+            globals: self.globals,
         })
     }
 
@@ -115,16 +118,23 @@ impl Manager {
             remote: self.remote,
             temporary: self.temporary,
             method: self.method,
+            globals: self.globals,
         })
     }
 
-    pub fn evaluate(self) -> Result<Self> {
-        self.template.clone().template()?.computable().compute()?;
+    pub fn evaluate(mut self) -> Result<Self> {
+        self.template
+            .clone()
+            .template()?
+            .computable()
+            .compute(&mut self.globals)?;
 
         Ok(self)
     }
 
     pub fn recursively_copy(self, destination: PathBuf) -> Result<Self> {
+        dbg!(&self.globals);
+
         CopyBuilder::new(self.template.clone().template()?.path(), destination)
             .overwrite(true)
             .overwrite_if_newer(true)

@@ -3,7 +3,10 @@ use crate::{
     Result,
 };
 use serde::{Deserialize, Serialize};
-use std::path::{Path, PathBuf};
+use std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Replace {
@@ -12,7 +15,7 @@ pub struct Replace {
 }
 
 impl Replace {
-    pub fn execute(&self) -> Result<()> {
+    pub fn execute(&self, global: &mut HashMap<String, String>) -> Result<()> {
         Ok(())
     }
 }
