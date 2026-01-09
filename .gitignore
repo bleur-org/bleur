@@ -6,3 +6,6 @@
 
 # Direnv
 /.direnv
+
+# Testing
+/test

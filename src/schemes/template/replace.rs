@@ -5,21 +5,19 @@ use crate::{
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, PartialOrd, Eq, Ord)]
-pub struct Variable {
-    placeholder: String,
-    types: String,
-    default: String,
-    source: String,
+pub struct Replace {
+    from: String,
+    to: String,
 }
 
-impl Variable {
+impl Replace {
     pub fn execute(&self) -> Result<()> {
         Ok(())
     }
 }
 
-impl ToTask for Variable {
+impl ToTask for Replace {
     fn to_task(self) -> Task {
-        Task::Rename(self)
+        Task::Move(self)
     }
 }

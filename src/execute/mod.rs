@@ -1,10 +1,6 @@
 pub mod task;
 
-use crate::{
-    execute::task::{Task, ToTask},
-    schemes::template::Template,
-    Result,
-};
+use crate::{execute::task::Task, schemes::template::Template, Result};
 
 pub struct Executor {
     tasks: Vec<Task>,
@@ -12,13 +8,9 @@ pub struct Executor {
 
 impl Executor {
     pub fn consume(template: Template) -> Self {
-        let variables = template
-            .variables()
-            .iter()
-            .map(|v| v.to_owned().to_task())
-            .collect();
-
-        Self { tasks: variables }
+        Self {
+            tasks: template.to_tasks(),
+        }
     }
 
     pub fn compute(self) -> Result<()> {
