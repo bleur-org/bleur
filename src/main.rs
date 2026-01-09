@@ -43,6 +43,7 @@ async fn run() -> Result<()> {
                 .and_then(|m| m.evaluate())
                 .and_then(|m| m.recursively_copy(path))?;
 
+            // TO BE REMOVED: temporary copying was implemented.
             // Use this in case you need to observe temporary file/folder.
             // tokio::time::sleep(Duration::from_secs(1000000000)).await;
         }
