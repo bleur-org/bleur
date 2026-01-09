@@ -41,7 +41,7 @@ async fn run() -> Result<()> {
             manager
                 .parse()
                 .and_then(|m| m.evaluate())
-                .and_then(|m| m.recursively_copy())?;
+                .and_then(|m| m.recursively_copy(path))?;
 
             // Use this in case you need to observe temporary file/folder.
             // tokio::time::sleep(Duration::from_secs(1000000000)).await;

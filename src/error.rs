@@ -5,7 +5,7 @@ pub type Result<T, E = BleurError> = std::result::Result<T, E>;
 
 #[derive(Error, Debug)]
 pub enum BleurError {
-    #[error("can't create temporary directory")]
+    #[error("can't create temporary directory or copy from temporary: {0}")]
     TemporaryCantCreate(#[from] std::io::Error),
     #[error("can't parse this shitty url ({0})")]
     CantParseUrl(#[from] url::ParseError),

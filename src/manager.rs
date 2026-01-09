@@ -1,63 +1,13 @@
+use std::path::PathBuf;
+
 use crate::{
     method::{Fetchable, Method, Methodical},
     schemes::Configuration,
     Error, Result,
 };
+use dircpy::CopyBuilder;
 use tempfile::{tempdir, TempDir};
 use url::Url;
-
-#[derive(Debug)]
-pub struct Manager {
-    remote: Url,
-    temporary: TempDir,
-    method: Method,
-    template: Configuration,
-}
-
-impl Manager {
-    pub fn new(remote: Url, temporary: TempDir, method: Method) -> Self {
-        Self {
-            remote,
-            temporary,
-            method,
-            template: Default::default(),
-        }
-    }
-
-    pub async fn instantiate(self) -> Result<Self> {
-        self.method.fetch().await?;
-
-        Ok(Self {
-            remote: self.remote,
-            temporary: self.temporary,
-            method: self.method,
-            template: self.template,
-        })
-    }
-
-    pub fn parse(self) -> Result<Self> {
-        let template = Configuration::surely_template(self.temporary.path().to_path_buf())?;
-
-        dbg!("{}", &template);
-
-        Ok(Self {
-            template,
-            remote: self.remote,
-            temporary: self.temporary,
-            method: self.method,
-        })
-    }
-
-    pub fn evaluate(self) -> Result<Self> {
-        self.template.clone().template()?.computable().compute()?;
-
-        Ok(self)
-    }
-
-    pub fn recursively_copy(self) -> Result<Self> {
-        Ok(self)
-    }
-}
 
 #[derive(Default, Debug)]
 pub struct ManageBuilder {
@@ -125,5 +75,64 @@ impl ManageBuilder {
             self.temporary.unwrap(),
             self.method.unwrap(),
         ))
+    }
+}
+
+#[derive(Debug)]
+pub struct Manager {
+    remote: Url,
+    temporary: TempDir,
+    method: Method,
+    template: Configuration,
+}
+
+impl Manager {
+    pub fn new(remote: Url, temporary: TempDir, method: Method) -> Self {
+        Self {
+            remote,
+            temporary,
+            method,
+            template: Default::default(),
+        }
+    }
+
+    pub async fn instantiate(self) -> Result<Self> {
+        self.method.fetch().await?;
+
+        Ok(Self {
+            remote: self.remote,
+            temporary: self.temporary,
+            method: self.method,
+            template: self.template,
+        })
+    }
+
+    pub fn parse(self) -> Result<Self> {
+        let template = Configuration::surely_template(self.temporary.path().to_path_buf())?;
+
+        dbg!("{}", &template);
+
+        Ok(Self {
+            template,
+            remote: self.remote,
+            temporary: self.temporary,
+            method: self.method,
+        })
+    }
+
+    pub fn evaluate(self) -> Result<Self> {
+        self.template.clone().template()?.computable().compute()?;
+
+        Ok(self)
+    }
+
+    pub fn recursively_copy(self, destination: PathBuf) -> Result<Self> {
+        CopyBuilder::new(self.template.clone().template()?.path(), destination)
+            .overwrite(true)
+            .overwrite_if_newer(true)
+            .overwrite_if_size_differs(true)
+            .run()?;
+
+        Ok(self)
     }
 }
