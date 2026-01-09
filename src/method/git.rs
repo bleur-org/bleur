@@ -16,7 +16,7 @@ impl Git {
         Self { url, path }
     }
 
-    async fn clone(&self) -> Result<()> {
+    fn clone(&self) -> Result<()> {
         let mut options = FetchOptions::new();
         options.depth(1);
 
@@ -35,8 +35,8 @@ impl Git {
 
 impl Fetchable for Git {
     // https://docs.rs/git2/latest/git2/build/struct.RepoBuilder.html
-    async fn fetch(&self) -> Result<()> {
-        self.clone().await?;
+    fn fetch(&self) -> Result<()> {
+        self.clone()?;
 
         Ok(())
     }

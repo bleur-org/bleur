@@ -13,7 +13,8 @@ use method::{git::Git, http::Http, Method};
 use std::path::PathBuf;
 use url::Url;
 
-pub static TEMPLATE: &str = include_str!("./template/bleur.toml");
+pub static TEMPLATE: &str = include_str!("./template/template.toml");
+pub static COLLECTION: &str = include_str!("./template/collection.toml");
 
 #[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Protocol {

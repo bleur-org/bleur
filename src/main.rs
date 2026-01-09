@@ -4,16 +4,13 @@ use bleur::*;
 use clap::Parser;
 use std::{env::current_dir, fs::File, io::Write};
 
-#[tokio::main]
-async fn main() -> Result<()> {
-    run()
-        .await
-        .unwrap_or_else(|e| beautiful_exit(e.to_string()));
+fn main() -> Result<()> {
+    run().unwrap_or_else(|e| beautiful_exit(e.to_string()));
 
     Ok(())
 }
 
-async fn run() -> Result<()> {
+fn run() -> Result<()> {
     let args = Cli::parse();
 
     match args.command {
@@ -24,16 +21,13 @@ async fn run() -> Result<()> {
         } => {
             let path = path.unwrap_or(current_dir()?);
 
-            let manager = manager::ManageBuilder::new()
+            manager::ManageBuilder::new()
                 .source(template)
                 .and_then(|mb| mb.tempdir())
                 .and_then(|mb| mb.fetch_method(method))
-                .and_then(|mb| mb.build())?
-                .instantiate()
-                .await?;
-
-            manager
-                .parse()
+                .and_then(|mb| mb.build())
+                .and_then(|m| m.instantiate())
+                .and_then(|m| m.parse())
                 .and_then(|m| m.evaluate())
                 .and_then(|m| m.recursively_copy(path))?;
 

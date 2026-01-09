@@ -14,11 +14,10 @@ owo-colors = { version = "4.2.2", default-features = false, features = [
   "supports-colors",
 ] }
 clap = { version = "4.5.40", features = ["derive", "color", "std"] }
-reqwest = { version = "0.12.4", features = ["stream"] }
+reqwest = { version = "0.12.4", features = ["stream", "blocking"] }
 serde = { version = "1.0.219", features = ["derive"] }
 tempfile = "3.20.0"
 thiserror = "2.0.12"
-tokio = { version = "1", features = ["full"] }
 toml = "0.8.23"
 url = { version = "2.5.4", default-features = false, features = ["serde"] }
 which = "8.0.0"

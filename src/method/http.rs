@@ -2,13 +2,12 @@ use crate::{
     error::{BleurError, Result},
     method::Fetchable,
 };
-use reqwest::{Client, ClientBuilder};
+use reqwest::blocking::{Client, ClientBuilder};
 use std::{
     fs,
     io::{self, Write},
 };
 use std::{fs::File, path::PathBuf};
-use tokio_stream::StreamExt;
 use url::Url;
 
 #[derive(Debug)]
@@ -27,12 +26,11 @@ impl Http {
         }
     }
 
-    pub async fn download(&self) -> Result<PathBuf> {
+    pub fn download(&self) -> Result<PathBuf> {
         let res = self
             .client
             .get(self.url.clone())
             .send()
-            .await
             .map_err(BleurError::CantDownloadViaHttp)?;
 
         let path = self
@@ -41,13 +39,12 @@ impl Http {
 
         let mut file = File::create(&path)
             .map_err(|_| BleurError::CantCreateFile(self.path.to_string_lossy().to_string()))?;
-        let mut stream = res.bytes_stream();
-
-        while let Some(item) = stream.next().await {
-            let chunk = item.map_err(BleurError::CantDownloadViaHttp)?;
-            file.write_all(&chunk)
-                .map_err(|_| BleurError::CantWriteToFile)?;
-        }
+        file.write_all(
+            &res.bytes()
+                .map_err(|e| BleurError::CantDownloadViaHttp(e))?
+                .to_vec(),
+        )
+        .map_err(|_| BleurError::CantWriteToFile)?;
 
         Ok(path)
     }
@@ -99,9 +96,9 @@ impl Http {
 }
 
 impl Fetchable for Http {
-    async fn fetch(&self) -> Result<()> {
+    fn fetch(&self) -> Result<()> {
         // Download the archive
-        let file = self.download().await?;
+        let file = self.download()?;
 
         // Unarchive and then delete archive
         self.unarchive(&file)?;

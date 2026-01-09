@@ -96,8 +96,8 @@ impl Manager {
         }
     }
 
-    pub async fn instantiate(self) -> Result<Self> {
-        self.method.fetch().await?;
+    pub fn instantiate(self) -> Result<Self> {
+        self.method.fetch()?;
 
         Ok(Self {
             remote: self.remote,

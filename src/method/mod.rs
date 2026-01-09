@@ -5,11 +5,11 @@ use crate::{
     method::{git::Git, http::Http},
     Result,
 };
-use std::{future::Future, path::PathBuf};
+use std::path::PathBuf;
 use url::Url;
 
 pub trait Fetchable {
-    fn fetch(&self) -> impl Future<Output = Result<()>>;
+    fn fetch(&self) -> Result<()>;
 }
 
 pub trait Methodical {
@@ -23,10 +23,10 @@ pub enum Method {
 }
 
 impl Fetchable for Method {
-    async fn fetch(&self) -> Result<()> {
+    fn fetch(&self) -> Result<()> {
         match &self {
-            Self::Http(h) => h.fetch().await,
-            Self::Git(g) => g.fetch().await,
+            Self::Http(h) => h.fetch(),
+            Self::Git(g) => g.fetch(),
         }?;
 
         Ok(())
