@@ -38,7 +38,21 @@ fn run() -> Result<()> {
         Commands::Init => {
             let path = current_dir()?;
             let mut file = File::create(path.join("bleur.toml"))?;
-            file.write_all(TEMPLATE.as_bytes())?;
+
+            let keys = vec!["template", "collection"];
+            let option = inquire::Select::new(
+                "Are you creating a single project template or a collection?",
+                keys,
+            )
+            .prompt()
+            .map_err(Error::CantParseUserPrompt)?;
+
+            let content = match option {
+                "collection" => COLLECTION,
+                _ => TEMPLATE,
+            };
+
+            file.write_all(content.as_bytes())?;
         }
         Commands::Test => {
             println!("Test call has been completed and reached end successfully!");

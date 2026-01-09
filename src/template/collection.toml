@@ -1,0 +1,13 @@
+[templates.example]
+path = "./example"
+description = "Some description about your template"
+welcome = """
+# Some detailed explanation about your template
+"""
+
+[templates.other-example]
+path = "./other-example"
+description = "Some description about your other template"
+welcome = """
+# Some detailed explanation about your other template
+"""
