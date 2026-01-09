@@ -39,12 +39,8 @@ impl Http {
 
         let mut file = File::create(&path)
             .map_err(|_| BleurError::CantCreateFile(self.path.to_string_lossy().to_string()))?;
-        file.write_all(
-            &res.bytes()
-                .map_err(|e| BleurError::CantDownloadViaHttp(e))?
-                .to_vec(),
-        )
-        .map_err(|_| BleurError::CantWriteToFile)?;
+        file.write_all(&res.bytes().map_err(BleurError::CantDownloadViaHttp)?)
+            .map_err(|_| BleurError::CantWriteToFile)?;
 
         Ok(path)
     }

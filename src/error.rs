@@ -33,7 +33,9 @@ pub enum BleurError {
     CantUnArchiveZip(#[from] zip::result::ZipError),
     #[error("can't delete downloaded archive from archived directory")]
     CantDeleteOldArchive,
-    #[error("there seem's to be no any or invalid template configuration in templates repository, maybe consider creating one?")]
+    #[error(
+        "there seem's to be no any or valid template configuration, maybe consider creating one?"
+    )]
     NoTemplateConfiguration,
     #[error("can't delete .git directory after cloning")]
     CantDeleteGitDirectorty,
