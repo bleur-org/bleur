@@ -38,8 +38,8 @@ impl Template {
         Self {
             project: self.project,
             variable: self.variable,
-            replace: self.replace,
             change: self.change,
+            replace: self.replace,
             path,
         }
     }
@@ -63,17 +63,17 @@ impl Template {
                 .collect::<Vec<Task>>(),
         );
 
-        // Appending replacements
+        // Appending changes
         tasks.extend(
-            self.replace
+            self.change
                 .iter()
                 .map(|v| v.to_owned().to_task(&self.path))
                 .collect::<Vec<Task>>(),
         );
 
-        // Appending changes
+        // Appending replacements
         tasks.extend(
-            self.change
+            self.replace
                 .iter()
                 .map(|v| v.to_owned().to_task(&self.path))
                 .collect::<Vec<Task>>(),

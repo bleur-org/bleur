@@ -8,7 +8,7 @@ in
 
     inputsFrom = [base];
 
-    programs = with pkgs; [
+    nativeBuildInputs = with pkgs; [
       nixd
       statix
       deadnix

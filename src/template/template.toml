@@ -1,9 +1,34 @@
 [project]
 name = "example"
 
-[[variables]]
-placeholder = "#example#" # A string to detect and replace to
-types = "string" # Validator
-default = "project" # Default value to replace to
-source = "Cargo.toml" # Source to file where string should be found
-message = "What would you like to name this project?" # Message to ask from user for prompt
+# # Sequence
+# variable -> change -> replace
+
+# assign a new variable
+[[variable]]
+ # with a name of "example"
+variable = "example"
+# which  will have default value of "project"
+default = "project"
+# and ask it with this question from user
+message = "What would you like to name this project?"
+
+# change a content inside a file
+[[change]]
+# from this file
+source = "Cargo.toml"
+# locate necessary location inside with this catchphrase
+placeholder = "#author#"
+# and replace it with this value whereas every @{word}@ will be
+# replaced with corresponding variable value, which is "project"
+# if user didn't enter anything, final value is: "project-file"
+value = "@example@-file"
+
+# rename/move a file from one place to another
+[[replace]]
+# take this file from this location
+from = "some.txt"
+# and computate the name of the file as explained in change
+# instruction, then move old file to new location with the new
+# computated name, final value in this case is: project.toml
+to = "@example@.toml"

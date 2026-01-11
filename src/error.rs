@@ -51,9 +51,9 @@ pub enum BleurError {
     InvalidFilePath(PathBuf),
     #[error("invalid regular expression for captchuring variable names: {0}")]
     InvalidRegex(#[from] regex::Error),
-    #[error("(bleur.toml) there's no such variable: {0}")]
+    #[error("there's no such variable in bleur.toml: {0}")]
     NoSuchVariable(String),
-    #[error("(bleur.toml) there's no such variable: {0}")]
+    #[error("can't move/rename given file: {0}")]
     CantMoveFile(String),
 
     // To be used only if you get despaired.

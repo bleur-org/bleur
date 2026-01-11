@@ -53,16 +53,16 @@ pub struct Cli {
 pub enum Commands {
     /// Start creating new project
     New {
-        /// URL to a repository or nix flake
-        /// of template or collection fo templates
-        #[arg(value_name = "URL")]
-        #[clap(default_value = "https://github.com/bleur-org/templates")]
-        template: String,
-
         /// Path where template should be
         /// bootstrapped to [default: current working directory]
         #[arg(value_name = "WHERE")]
         path: Option<PathBuf>,
+
+        /// URL to a repository or nix flake
+        /// of template or collection fo templates
+        #[arg(short, long)]
+        #[clap(default_value = "https://github.com/bleur-org/templates")]
+        template: String,
 
         /// Chosen method of fetching repository
         #[arg(short, long)]
@@ -72,7 +72,4 @@ pub enum Commands {
 
     /// Bootstrap a bleur toml file for a new template
     Init,
-
-    /// To test things out and see how it goes
-    Test,
 }

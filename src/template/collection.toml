@@ -1,13 +1,26 @@
+# there are multiple templates stored
+# where this config file is stored
+
+# then, ...
+
+# there's a template
 [templates.example]
+# in this location, below config file
 path = "./example"
+# which is shortly about
 description = "Some description about your template"
+# and user should see upon completion of bootstrap
 welcome = """
 # Some detailed explanation about your template
 """
 
+# there's yet another template
 [templates.other-example]
+# in this location, also below config file
 path = "./other-example"
+# which is shortly about
 description = "Some description about your other template"
+# and user should see upon completion of bootstrap
 welcome = """
 # Some detailed explanation about your other template
 """
