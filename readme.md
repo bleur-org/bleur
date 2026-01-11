@@ -82,7 +82,7 @@ both shell.nix and default.nix to don't mix things up.
 
 ## License
 
-This project is dual licensed under the MIT License and Apache-2.0 - see the [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE) files for details.
+This project is dual licensed under the MIT License and Apache-2.0 - see the [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE) files for details. Proudly written and developed by human, no usage of AI (LLM) at all, only brain and compiler.
 
 <p align="center">
     <a href="https://notbyai.fyi/app/draft/1445">
