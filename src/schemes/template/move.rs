@@ -23,8 +23,6 @@ impl Move {
             .ok_or(Error::InvalidFilePath(self.to.clone()))?
             .to_owned();
 
-        dbg!(&self.from, &self.to);
-
         let variables: Vec<(String, Option<&String>)> = global
             .globs(to.clone())
             .iter()

@@ -31,8 +31,6 @@ impl Change {
             .map(|m| (m.to_owned(), global.get(m)))
             .collect();
 
-        dbg!(&self.source);
-
         let mut contents = fs::read_to_string(self.source.clone())?;
 
         for var in variables {

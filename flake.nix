@@ -12,7 +12,11 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
-  outputs = {flake-parts, ...} @ inputs:
+  outputs = {
+    self,
+    flake-parts,
+    ...
+  } @ inputs:
     flake-parts.lib.mkFlake {inherit inputs;} ({...}: {
       systems = [
         "x86_64-linux"
@@ -24,7 +28,7 @@
         formatter = pkgs.alejandra;
 
         # Development environment
-        devShells.default = import ./shell.nix {inherit pkgs;};
+        devShells.default = import ./shell.nix self {inherit pkgs;};
 
         # Output package
         packages.default = pkgs.callPackage ./. {inherit pkgs;};

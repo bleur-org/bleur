@@ -1,66 +1,28 @@
-{
-  pkgs ? let
-    lock = (builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked;
-    nixpkgs = fetchTarball {
-      url = "https://github.com/nixos/nixpkgs/archive/${lock.rev}.tar.gz";
-      sha256 = lock.narHash;
-    };
-  in
-    import nixpkgs {overlays = [];},
-  ...
-}: let
-  # Helpful nix function
-  getLibFolder = pkg: "${pkg}/lib";
-
-  # Manifest
+flake: {pkgs, ...}: let
+  system = pkgs.hostPlatform.system;
+  base = flake.packages.${system}.default;
   manifest = (pkgs.lib.importTOML ./Cargo.toml).package;
 in
-  pkgs.stdenv.mkDerivation {
+  pkgs.mkShell {
     name = "${manifest.name}-dev";
 
-    # Compile time dependencies
-    nativeBuildInputs = with pkgs; [
-      # GCC toolchain
-      pkg-config
+    inputsFrom = [base];
 
-      # Hail the Nix
+    programs = with pkgs; [
       nixd
       statix
       deadnix
       alejandra
 
-      # Rust
-      rustc
-      cargo
       rustfmt
       clippy
       rust-analyzer
-
-      # Other compile time dependencies
-      # here
-      openssl
     ];
 
-    # Runtime dependencies which will be in present
-    # after activation
-    buildInputs = with pkgs; [
-      openssl
-      # libressl
-    ];
-
-    # Set Environment Variables
     RUST_BACKTRACE = "full";
     RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
 
-    # Compiler LD variables
-    # > Make sure packages have /lib or /include path'es
-    NIX_LDFLAGS = "-L${(getLibFolder pkgs.libiconv)}";
-    LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
-      pkgs.libiconv
-    ];
-
     shellHook = ''
-      # Extra steps to do while activating development shell
       rm -rf ./test && mkdir -p ./test
     '';
   }
