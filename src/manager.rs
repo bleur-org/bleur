@@ -1,4 +1,4 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::{collections::HashMap, path::PathBuf, sync::LazyLock};
 
 use crate::{
     method::{Fetchable, Method, Methodical},
@@ -6,8 +6,12 @@ use crate::{
     Error, Result,
 };
 use dircpy::CopyBuilder;
+use regex::{Regex, RegexBuilder};
 use tempfile::{tempdir, TempDir};
 use url::Url;
+
+pub static REGEX: LazyLock<Regex> =
+    LazyLock::new(|| RegexBuilder::new(r"@([a-zA-Z0-9_]+)@").build().unwrap());
 
 #[derive(Default, Debug)]
 pub struct ManageBuilder {
@@ -140,5 +144,28 @@ impl Manager {
             .run()?;
 
         Ok(self)
+    }
+}
+
+/// For HashMap to implement string search
+pub trait Glubtastic {
+    fn globs<T>(&self, text: T) -> Vec<String>
+    where
+        T: AsRef<str>;
+}
+
+impl Glubtastic for HashMap<String, String> {
+    /// Catch all @variable@ references within a string
+    fn globs<T>(&self, text: T) -> Vec<String>
+    where
+        T: AsRef<str>,
+    {
+        REGEX
+            .captures_iter(text.as_ref())
+            .map(|caps| {
+                let (_, [input]) = caps.extract();
+                input.to_owned()
+            })
+            .collect::<Vec<String>>()
     }
 }

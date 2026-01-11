@@ -27,6 +27,7 @@ tokio-stream = { version = "0.1.17", features = ["full"] }
 zip = "4.3.0"
 inquire = {version = "0.9.1", features = ["editor"]}
 dircpy = "0.3.19"
+regex = "1.12.2"
 
 # Development dependencies which aren't used in release binary
 [dev-dependencies]

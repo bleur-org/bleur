@@ -1,13 +1,15 @@
+pub mod change;
+pub mod r#move;
 pub mod project;
-pub mod replace;
 pub mod variable;
 
 use crate::execute::{
     task::{Task, ToTask},
     Executor,
 };
+use change::Change;
 use project::Project;
-use replace::Replace;
+use r#move::Move;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use variable::Variable;
@@ -17,10 +19,13 @@ pub struct Template {
     project: Project,
 
     #[serde(default)]
-    variables: Vec<Variable>,
+    variable: Vec<Variable>,
 
     #[serde(default)]
-    replaces: Vec<Replace>,
+    change: Vec<Change>,
+
+    #[serde(default)]
+    replace: Vec<Move>,
 
     /// Only for runtime use!
     /// For path awareness at recursive copying.
@@ -32,18 +37,15 @@ impl Template {
     pub fn with_path(self, path: PathBuf) -> Self {
         Self {
             project: self.project,
-            variables: self.variables,
-            replaces: self.replaces,
+            variable: self.variable,
+            replace: self.replace,
+            change: self.change,
             path,
         }
     }
 
     pub fn path(&self) -> &PathBuf {
         &self.path
-    }
-
-    pub fn variables(&self) -> &Vec<Variable> {
-        &self.variables
     }
 
     pub fn computable(self) -> Executor {
@@ -55,7 +57,7 @@ impl Template {
 
         // Appending variables
         tasks.extend(
-            self.variables
+            self.variable
                 .iter()
                 .map(|v| v.to_owned().to_task(&self.path))
                 .collect::<Vec<Task>>(),
@@ -63,7 +65,15 @@ impl Template {
 
         // Appending replacements
         tasks.extend(
-            self.replaces
+            self.replace
+                .iter()
+                .map(|v| v.to_owned().to_task(&self.path))
+                .collect::<Vec<Task>>(),
+        );
+
+        // Appending changes
+        tasks.extend(
+            self.change
                 .iter()
                 .map(|v| v.to_owned().to_task(&self.path))
                 .collect::<Vec<Task>>(),

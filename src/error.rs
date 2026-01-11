@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use owo_colors::OwoColorize;
 use thiserror::Error;
 
@@ -45,6 +47,14 @@ pub enum BleurError {
     NoSuchTemplateInCollection,
     #[error("during the process, bleur validated an invalid template. please, report about it at https://github.com/bleur-org/bleur/issues")]
     TemplateIsInvalid,
+    #[error("path shown in template configuration seems invalid: {0}")]
+    InvalidFilePath(PathBuf),
+    #[error("invalid regular expression for captchuring variable names: {0}")]
+    InvalidRegex(#[from] regex::Error),
+    #[error("(bleur.toml) there's no such variable: {0}")]
+    NoSuchVariable(String),
+    #[error("(bleur.toml) there's no such variable: {0}")]
+    CantMoveFile(String),
 
     // To be used only if you get despaired.
     // Until so, don't touch, for the sake of your own sanity!

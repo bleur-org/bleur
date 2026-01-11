@@ -1,4 +1,4 @@
-use crate::schemes::template::{replace::Replace, variable::Variable};
+use crate::schemes::template::{change::Change, r#move::Move, variable::Variable};
 use crate::Result;
 use std::collections::HashMap;
 use std::path::Path;
@@ -9,29 +9,36 @@ pub trait ToTask {
 
 #[derive(PartialEq, Eq)]
 pub enum Task {
-    /// Change content in a file
-    Rename(Variable),
+    /// Ask for global variables
+    Variable(Variable),
 
     /// Move a file from a place to place
-    Move(Replace),
+    Change(Change),
+
+    /// Change content in a file
+    Move(Move),
 }
 
 impl Task {
     pub fn execute(&self, global: &mut HashMap<String, String>) -> Result<()> {
         match self {
-            Self::Rename(v) => v.execute(global),
-            Self::Move(r) => r.execute(global),
+            Self::Variable(v) => v.execute(global),
+            Self::Change(c) => c.execute(global),
+            Self::Move(m) => m.execute(global),
         }
     }
 
     /// Ordering whether what to perform after what
     fn index(&self) -> u8 {
         match *self {
-            // First do the value replacings
-            Self::Rename(_) => 1,
+            // First get the all variables
+            Self::Variable(_) => 1,
 
             // Then proceed with moving folders from->to desitinations
-            Self::Move(_) => 2,
+            Self::Change(_) => 2,
+
+            // Then replace contents inside files
+            Self::Move(_) => 3,
         }
     }
 }

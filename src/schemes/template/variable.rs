@@ -3,26 +3,18 @@ use crate::{
     Error, Result,
 };
 use serde::{Deserialize, Serialize};
-use std::{
-    collections::HashMap,
-    fs::{self, OpenOptions},
-    io::Write,
-    path::{Path, PathBuf},
-};
+use std::{collections::HashMap, path::Path};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Variable {
-    placeholder: String,
-    message: String,
-    types: String,
+    /// Variable to make use of in names of files while moving
+    variable: String,
+
+    /// Default value to be picked up
     default: String,
 
-    /// Where the file is located
-    source: PathBuf,
-
-    /// Variable to make use of in names of files while moving
-    /// Defaults to placeholder if None passed
-    variable: Option<String>,
+    /// Question to ask from user to get value
+    message: String,
 }
 
 impl Variable {
@@ -33,19 +25,7 @@ impl Variable {
             .prompt()
             .map_err(Error::CantParseUserPrompt)?;
 
-        // Pick variable name or default to placeholder
-        let key = self.variable.as_ref().unwrap_or(&self.placeholder);
-
-        global.insert(key.clone(), prompt.clone());
-
-        let contents = fs::read_to_string(self.source.clone())?.replace(&self.placeholder, &prompt);
-
-        let mut file = OpenOptions::new()
-            .write(true)
-            .truncate(true)
-            .open(&self.source)?;
-
-        file.write_all(contents.as_bytes())?;
+        global.insert(self.variable.clone(), prompt.clone());
 
         Ok(())
     }
@@ -53,12 +33,9 @@ impl Variable {
 
 impl ToTask for Variable {
     fn to_task(self, path: &Path) -> Task {
-        Task::Rename(Variable {
-            placeholder: self.placeholder,
+        Task::Variable(Variable {
             message: self.message,
-            types: self.types,
             default: self.default,
-            source: path.join(self.source),
             variable: self.variable,
         })
     }
