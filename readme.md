@@ -85,5 +85,7 @@ both shell.nix and default.nix to don't mix things up.
 This project is dual licensed under the MIT License and Apache-2.0 - see the [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE) files for details.
 
 <p align="center">
-    <img src=".github/assets/footer.png" alt="Bleur's {Buddy}">
+    <a href="https://notbyai.fyi/app/draft/1445">
+      <img src=".github/assets/footer.png" alt="Bleur's {Buddy}">
+    </a>
 </p>
