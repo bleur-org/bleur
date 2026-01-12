@@ -17,6 +17,10 @@ in
       rustfmt
       clippy
       rust-analyzer
+
+      just
+      taplo
+      just-lsp
     ];
 
     RUST_BACKTRACE = "full";

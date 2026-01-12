@@ -7,7 +7,7 @@ pub trait ToTask {
     fn to_task(self, path: &Path) -> Task;
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum Task {
     /// Ask for global variables
     Variable(Variable),

@@ -4,6 +4,7 @@ use std::collections::HashMap;
 
 use crate::{execute::task::Task, schemes::template::Template, Result};
 
+#[derive(Debug)]
 pub struct Executor {
     tasks: Vec<Task>,
 }
