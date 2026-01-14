@@ -42,8 +42,7 @@ impl Methodical for Protocol {
 
 /// That buddy that will get everything ready for you
 #[derive(Debug, Parser)]
-#[command(name = "bleur")]
-#[command(about = "That buddy that will get everything ready for you", long_about = None)]
+#[clap(version, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
