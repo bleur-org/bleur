@@ -23,6 +23,8 @@ placeholder = "#author#"
 # replaced with corresponding variable value, which is "project"
 # if user didn't enter anything, final value is: "project-file"
 value = "@example@-file"
+# maybe apply these functions to the value (optional)
+apply = "uppercase"
 
 # rename/move a file from one place to another
 [[replace]]

@@ -21,6 +21,9 @@ pub struct Change {
 
     /// Computatble value which might contain global variables
     value: String,
+
+    /// Functions to apply on value
+    apply: String,
 }
 
 impl Change {
