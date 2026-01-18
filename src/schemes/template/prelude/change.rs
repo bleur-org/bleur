@@ -36,17 +36,20 @@ impl Change {
             .map(|m| (m.to_owned(), global.get(m)))
             .collect();
 
-        let mut contents = fs::read_to_string(self.source.clone())?;
-        let applications = Apply::parse(self.apply.clone());
+        let mut change = self.value.clone();
 
         for var in variables {
             if let Some(v) = var.1 {
-                contents = contents.replace(&self.placeholder, &applications.execute(v));
+                change = change.replace(&format!("@{}@", var.0), v);
                 continue;
             }
 
             return Err(Error::NoSuchVariable(var.0.clone()));
         }
+
+        let applications = Apply::parse(self.apply.clone());
+        let contents = fs::read_to_string(self.source.clone())?
+            .replace(&self.placeholder, &applications.execute(change));
 
         let mut file = OpenOptions::new()
             .write(true)

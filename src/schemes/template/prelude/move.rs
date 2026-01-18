@@ -38,16 +38,18 @@ impl Move {
             .collect();
 
         let mut file_name = to;
-        let applications = Apply::parse(self.apply.clone());
 
         for var in variables {
             if let Some(v) = var.1 {
-                file_name = file_name.replace(&format!("@{}@", var.0), &applications.execute(v));
+                file_name = file_name.replace(&format!("@{}@", var.0), v);
                 continue;
             }
 
             return Err(Error::NoSuchVariable(var.0.clone()));
         }
+
+        let applications = Apply::parse(self.apply.clone());
+        file_name = applications.execute(file_name);
 
         std::fs::rename(&self.from, file_name).map_err(|e| Error::CantMoveFile(e.to_string()))?;
 
