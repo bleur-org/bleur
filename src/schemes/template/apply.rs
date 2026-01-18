@@ -42,7 +42,6 @@ impl Apply {
     where
         T: ToString,
     {
-        let initial = input.to_string();
         self.0.iter().fold(
             input.to_string(),
             |current, instruction| match instruction {
