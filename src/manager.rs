@@ -29,48 +29,22 @@ impl ManageBuilder {
         }
     }
 
-    pub fn tempdir(self) -> Result<Self> {
-        Ok(Self {
-            remote: self.remote,
-            temporary: Some(tempdir().map_err(Error::TemporaryCantCreate)?),
-            method: self.method,
-        })
+    pub fn tempdir(mut self) -> Result<Self> {
+        self.temporary = Some(tempdir().map_err(Error::TemporaryCantCreate)?);
+        Ok(self)
     }
 
-    pub fn source<T>(self, url: T) -> Result<Self>
-    where
-        T: AsRef<str>,
-    {
-        Ok(Self {
-            temporary: self.temporary,
-            method: self.method,
-            remote: match Url::parse(url.as_ref()) {
-                Ok(l) => Some(l),
-                Err(e) => return Err(Error::CantParseUrl(e)),
-            },
-        })
+    pub fn source<T: AsRef<str>>(mut self, url: T) -> Result<Self> {
+        self.remote = Some(Url::parse(url.as_ref()).map_err(Error::CantParseUrl)?);
+        Ok(self)
     }
 
-    pub fn fetch_method<T>(self, method: T) -> Result<Self>
-    where
-        T: Methodical,
-    {
-        if self.temporary.is_none() || self.remote.is_none() {
+    pub fn fetch_method<T: Methodical>(mut self, method: T) -> Result<Self> {
+        let (Some(remote), Some(ref destination)) = (&self.remote, &self.temporary) else {
             return Err(Error::InsufficientArgumentsToDecide);
-        }
-
-        let destination = self.temporary.unwrap();
-
-        let method = method.to_method(
-            self.remote.clone().unwrap(),
-            destination.path().to_path_buf(),
-        );
-
-        Ok(Self {
-            method: Some(method),
-            remote: self.remote,
-            temporary: Some(destination),
-        })
+        };
+        self.method = Some(method.to_method(remote.clone(), destination.path().to_path_buf()));
+        Ok(self)
     }
 
     pub fn build(self) -> Result<Manager> {
