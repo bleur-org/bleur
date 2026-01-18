@@ -2,7 +2,7 @@ use std::{collections::HashMap, path::PathBuf, sync::LazyLock};
 
 use crate::{
     method::{Fetchable, Method, Methodical},
-    schemes::Configuration,
+    schemes::{template::Template, Configuration},
     Error, Result,
 };
 use dircpy::CopyBuilder;
@@ -78,6 +78,7 @@ impl ManageBuilder {
             self.remote.unwrap(),
             self.temporary.unwrap(),
             self.method.unwrap(),
+            todo!(),
         ))
     }
 }
@@ -87,17 +88,17 @@ pub struct Manager {
     remote: Url,
     temporary: TempDir,
     method: Method,
-    template: Configuration,
+    template: Template,
     globals: HashMap<String, String>,
 }
 
 impl Manager {
-    pub fn new(remote: Url, temporary: TempDir, method: Method) -> Self {
+    pub fn new(remote: Url, temporary: TempDir, method: Method, template: Template) -> Self {
         Self {
             remote,
             temporary,
             method,
-            template: Default::default(),
+            template,
             globals: HashMap::default(),
         }
     }
@@ -129,7 +130,6 @@ impl Manager {
     pub fn evaluate(mut self) -> Result<Self> {
         self.template
             .clone()
-            .template()?
             .computable()
             .compute(&mut self.globals)?;
 
@@ -137,7 +137,7 @@ impl Manager {
     }
 
     pub fn recursively_copy(self, destination: PathBuf) -> Result<Self> {
-        CopyBuilder::new(self.template.clone().template()?.path(), destination)
+        CopyBuilder::new(self.template.clone().path(), destination)
             .overwrite(true)
             .overwrite_if_newer(true)
             .overwrite_if_size_differs(true)
