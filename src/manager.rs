@@ -2,7 +2,7 @@ use std::{collections::HashMap, path::PathBuf, sync::LazyLock};
 
 use crate::{
     method::{Fetchable, Method, Methodical},
-    schemes::Configuration,
+    schemes::{template::Template, Configuration},
     Error, Result,
 };
 use dircpy::CopyBuilder;
@@ -29,48 +29,22 @@ impl ManageBuilder {
         }
     }
 
-    pub fn tempdir(self) -> Result<Self> {
-        Ok(Self {
-            remote: self.remote,
-            temporary: Some(tempdir().map_err(Error::TemporaryCantCreate)?),
-            method: self.method,
-        })
+    pub fn tempdir(mut self) -> Result<Self> {
+        self.temporary = Some(tempdir().map_err(Error::TemporaryCantCreate)?);
+        Ok(self)
     }
 
-    pub fn source<T>(self, url: T) -> Result<Self>
-    where
-        T: AsRef<str>,
-    {
-        Ok(Self {
-            temporary: self.temporary,
-            method: self.method,
-            remote: match Url::parse(url.as_ref()) {
-                Ok(l) => Some(l),
-                Err(e) => return Err(Error::CantParseUrl(e)),
-            },
-        })
+    pub fn source<T: AsRef<str>>(mut self, url: T) -> Result<Self> {
+        self.remote = Some(Url::parse(url.as_ref()).map_err(Error::CantParseUrl)?);
+        Ok(self)
     }
 
-    pub fn fetch_method<T>(self, method: T) -> Result<Self>
-    where
-        T: Methodical,
-    {
-        if self.temporary.is_none() || self.remote.is_none() {
+    pub fn fetch_method<T: Methodical>(mut self, method: T) -> Result<Self> {
+        let (Some(remote), Some(ref destination)) = (&self.remote, &self.temporary) else {
             return Err(Error::InsufficientArgumentsToDecide);
-        }
-
-        let destination = self.temporary.unwrap();
-
-        let method = method.to_method(
-            self.remote.clone().unwrap(),
-            destination.path().to_path_buf(),
-        );
-
-        Ok(Self {
-            method: Some(method),
-            remote: self.remote,
-            temporary: Some(destination),
-        })
+        };
+        self.method = Some(method.to_method(remote.clone(), destination.path().to_path_buf()));
+        Ok(self)
     }
 
     pub fn build(self) -> Result<Manager> {
@@ -78,6 +52,7 @@ impl ManageBuilder {
             self.remote.unwrap(),
             self.temporary.unwrap(),
             self.method.unwrap(),
+            todo!(),
         ))
     }
 }
@@ -87,17 +62,17 @@ pub struct Manager {
     remote: Url,
     temporary: TempDir,
     method: Method,
-    template: Configuration,
+    template: Template,
     globals: HashMap<String, String>,
 }
 
 impl Manager {
-    pub fn new(remote: Url, temporary: TempDir, method: Method) -> Self {
+    pub fn new(remote: Url, temporary: TempDir, method: Method, template: Template) -> Self {
         Self {
             remote,
             temporary,
             method,
-            template: Default::default(),
+            template,
             globals: HashMap::default(),
         }
     }
@@ -129,7 +104,6 @@ impl Manager {
     pub fn evaluate(mut self) -> Result<Self> {
         self.template
             .clone()
-            .template()?
             .computable()
             .compute(&mut self.globals)?;
 
@@ -137,7 +111,7 @@ impl Manager {
     }
 
     pub fn recursively_copy(self, destination: PathBuf) -> Result<Self> {
-        CopyBuilder::new(self.template.clone().template()?.path(), destination)
+        CopyBuilder::new(self.template.clone().path(), destination)
             .overwrite(true)
             .overwrite_if_newer(true)
             .overwrite_if_size_differs(true)
