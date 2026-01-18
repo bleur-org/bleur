@@ -1,6 +1,7 @@
 use crate::{
     execute::task::{Task, ToTask},
     manager::Glubtastic,
+    schemes::template::apply::Apply,
     Error, Result,
 };
 use serde::{Deserialize, Serialize};
@@ -11,8 +12,15 @@ use std::{
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Move {
+    /// Take a file at ...
     from: PathBuf,
+
+    /// And then move it to ...
     to: PathBuf,
+
+    /// Functions to apply on value
+    #[serde(default)]
+    apply: String,
 }
 
 impl Move {
@@ -30,10 +38,11 @@ impl Move {
             .collect();
 
         let mut file_name = to;
+        let applications = Apply::parse(self.apply.clone());
 
         for var in variables {
             if let Some(v) = var.1 {
-                file_name = file_name.replace(&format!("@{}@", var.0), v);
+                file_name = file_name.replace(&format!("@{}@", var.0), &applications.execute(v));
                 continue;
             }
 
@@ -51,6 +60,7 @@ impl ToTask for Move {
         Task::Move(Move {
             from: path.join(self.from),
             to: path.join(self.to),
+            apply: self.apply,
         })
     }
 }

@@ -1,6 +1,7 @@
 use crate::{
     execute::task::{Task, ToTask},
     manager::Glubtastic,
+    schemes::template::apply::Apply,
     Error, Result,
 };
 use serde::{Deserialize, Serialize};
@@ -23,6 +24,7 @@ pub struct Change {
     value: String,
 
     /// Functions to apply on value
+    #[serde(default)]
     apply: String,
 }
 
@@ -35,10 +37,11 @@ impl Change {
             .collect();
 
         let mut contents = fs::read_to_string(self.source.clone())?;
+        let applications = Apply::parse(self.apply.clone());
 
         for var in variables {
             if let Some(v) = var.1 {
-                contents = contents.replace(&self.placeholder, v);
+                contents = contents.replace(&self.placeholder, &applications.execute(v));
                 continue;
             }
 
@@ -62,6 +65,7 @@ impl ToTask for Change {
             placeholder: self.placeholder,
             source: path.join(self.source),
             value: self.value,
+            apply: self.apply,
         })
     }
 }
