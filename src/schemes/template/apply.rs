@@ -43,20 +43,13 @@ impl Apply {
         T: ToString,
     {
         let initial = input.to_string();
-        Self::recurse(&self.0, initial, 0)
-    }
-
-    fn recurse(instance: &[Instructions], current: String, idx: usize) -> String {
-        if idx >= instance.len() {
-            return current;
-        }
-
-        let next = match instance[idx] {
-            Instructions::Uppercase => current.to_uppercase(),
-            Instructions::Lowercase => current.to_lowercase(),
-            Instructions::Unknown => current,
-        };
-
-        Self::recurse(instance, next, idx + 1)
+        self.0.iter().fold(
+            input.to_string(),
+            |current, instruction| match instruction {
+                Instructions::Uppercase => current.to_uppercase(),
+                Instructions::Lowercase => current.to_lowercase(),
+                Instructions::Unknown => current,
+            },
+        )
     }
 }
