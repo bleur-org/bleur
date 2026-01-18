@@ -1,9 +1,11 @@
+pub mod provider;
+
 use crate::error::{BleurError, Result};
-use git2::{build::RepoBuilder, FetchOptions};
+use crate::method::git::provider::Provider;
+use crate::method::Fetchable;
+use git2::FetchOptions;
 use std::path::PathBuf;
 use url::Url;
-
-use crate::method::Fetchable;
 
 #[derive(Debug)]
 pub struct Git {
@@ -20,11 +22,8 @@ impl Git {
         let mut options = FetchOptions::new();
         options.depth(1);
 
-        RepoBuilder::new()
-            .fetch_options(options)
-            .clone(self.url.as_str(), self.path.as_path())
-            .map(|_| ())
-            .map_err(BleurError::CantCloneRepository)?;
+        let provider = Provider::from_url(self.url.clone())?;
+        provider.fetch_repo(options, &self.path).map(|_| ())?;
 
         std::fs::remove_dir_all(self.path.as_path().join(".git"))
             .map_err(|_| BleurError::CantDeleteGitDirectorty)?;

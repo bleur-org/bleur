@@ -55,6 +55,14 @@ pub enum BleurError {
     NoSuchVariable(String),
     #[error("can't move/rename given file: {0}")]
     CantMoveFile(String),
+    #[error("the given git provider is known: {0}")]
+    UnknownGitProvider(String),
+    #[error("the given git repository owner in the url is invalid: {0}")]
+    InvalidRepositoryOwner(String),
+    #[error("the given git repository name in the url is invalid: {0}")]
+    InvalidRepositoryName(String),
+    #[error("git error: {0}")]
+    GitError(git2::Error),
 
     // To be used only if you get despaired.
     // Until so, don't touch, for the sake of your own sanity!
