@@ -65,7 +65,8 @@ impl Configuration {
     pub fn template(self) -> Result<Template> {
         match self {
             Configuration::Template(template) => Ok(template),
-            _ => Err(Error::TemplateIsInvalid),
+            Configuration::Empty => Err(Error::TemplateIsInvalid),
+            Configuration::Collections(_) => Err(Error::TemplateIsInvalid),
         }
     }
 }
