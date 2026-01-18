@@ -1,4 +1,4 @@
-use crate::schemes::template::{change::Change, r#move::Move, variable::Variable};
+use crate::schemes::template::prelude::{change::Change, r#move::Move, variable::Variable};
 use crate::Result;
 use std::collections::HashMap;
 use std::path::Path;

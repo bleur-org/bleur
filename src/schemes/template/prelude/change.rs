@@ -1,6 +1,7 @@
 use crate::{
     execute::task::{Task, ToTask},
     manager::Glubtastic,
+    schemes::template::apply::Apply,
     Error, Result,
 };
 use serde::{Deserialize, Serialize};
@@ -21,6 +22,10 @@ pub struct Change {
 
     /// Computatble value which might contain global variables
     value: String,
+
+    /// Functions to apply on value
+    #[serde(default)]
+    apply: String,
 }
 
 impl Change {
@@ -31,16 +36,20 @@ impl Change {
             .map(|m| (m.to_owned(), global.get(m)))
             .collect();
 
-        let mut contents = fs::read_to_string(self.source.clone())?;
+        let mut change = self.value.clone();
 
         for var in variables {
             if let Some(v) = var.1 {
-                contents = contents.replace(&self.placeholder, v);
+                change = change.replace(&format!("@{}@", var.0), v);
                 continue;
             }
 
             return Err(Error::NoSuchVariable(var.0.clone()));
         }
+
+        let applications = Apply::parse(self.apply.clone());
+        let contents = fs::read_to_string(self.source.clone())?
+            .replace(&self.placeholder, &applications.execute(change));
 
         let mut file = OpenOptions::new()
             .write(true)
@@ -59,6 +68,7 @@ impl ToTask for Change {
             placeholder: self.placeholder,
             source: path.join(self.source),
             value: self.value,
+            apply: self.apply,
         })
     }
 }

@@ -1,18 +1,16 @@
-pub mod change;
-pub mod r#move;
-pub mod project;
-pub mod variable;
+pub mod apply;
+pub mod prelude;
 
 use crate::execute::{
     task::{Task, ToTask},
     Executor,
 };
-use change::Change;
-use project::Project;
-use r#move::Move;
+use prelude::change::Change;
+use prelude::project::Project;
+use prelude::r#move::Move;
+use prelude::variable::Variable;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use variable::Variable;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Template {
