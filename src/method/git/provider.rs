@@ -32,7 +32,7 @@ fn provider_link(scheme: String, owner: String, repo: String) -> Result<String> 
 impl Provider {
     pub fn from_url(url: Url) -> Result<Self> {
         // example:owner/repo/branch
-        // ----------^--------------
+        // ---^---------------------
         if url.scheme() == "https" || url.scheme() == "http" {
             return Ok(Self::Other {
                 url: url.to_string(),
