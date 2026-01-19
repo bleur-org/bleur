@@ -115,7 +115,7 @@ impl Manager {
     }
 
     pub fn parse(self) -> Result<Self> {
-        let template = Configuration::surely_template(self.temporary.path().to_path_buf())?;
+        let template = Configuration::surely_template(self.temporary.path().to_path_buf(), 1)?;
 
         Ok(Self {
             template,
