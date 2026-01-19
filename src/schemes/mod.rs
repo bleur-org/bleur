@@ -8,21 +8,17 @@ use std::path::PathBuf;
 
 static MAX_COLLECTIONS_DEPTH: u8 = 5;
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Clone)]
 pub enum Configuration {
     // If repo is a single template
     Template(Template),
 
     // If repo contains collection of templates
     Collections(Collections),
-
-    // If repo doesn't have any configuration
-    #[default]
-    Empty,
 }
 
 impl Configuration {
-    pub fn parse(path: PathBuf) -> Self {
+    pub fn parse(path: PathBuf) -> Option<Configuration> {
         let config = Some(path.clone())
             .filter(|p| p.exists())
             .map(|p| p.join("bleur.toml"))
@@ -33,30 +29,27 @@ impl Configuration {
         if let Some(text) = config {
             // And if it's parsible to Template type
             if let Ok(t) = toml::from_str::<Template>(&text) {
-                return Configuration::Template(t.with_path(path));
+                return Some(Configuration::Template(t.with_path(path)));
             }
 
             // And if it's parsible to Collection type
             if let Ok(c) = toml::from_str::<Collections>(&text) {
-                return Configuration::Collections(c);
+                return Some(Configuration::Collections(c));
             }
         };
 
         // Nothing's there + invalid config file
-        Self::Empty
+        None
     }
 
     pub fn surely_template(path: PathBuf, depth: u8) -> Result<Self> {
-        use Configuration::*;
-
         if depth > MAX_COLLECTIONS_DEPTH {
             return Err(Error::AintNoWayThisDeepCollection(depth));
         }
 
         match Self::parse(path.clone()) {
-            Template(t) => Ok(Self::Template(t)),
-            Empty => Err(Error::NoTemplateConfiguration),
-            Collections(c) => {
+            Some(Configuration::Template(t)) => Ok(Configuration::Template(t)),
+            Some(Configuration::Collections(c)) => {
                 let option = inquire::Select::new(
                     "Choose the template you would like to bootstrap:",
                     c.keys(),
@@ -67,14 +60,14 @@ impl Configuration {
                 let option = c.select(option).ok_or(Error::NoSuchTemplateInCollection)?;
 
                 Self::surely_template(option.path(path), depth + 1)
-            }
+            },
+            None => Err(Error::NoTemplateConfiguration)
         }
     }
 
     pub fn template(self) -> Result<Template> {
         match self {
             Configuration::Template(template) => Ok(template),
-            Configuration::Empty => Err(Error::TemplateIsInvalid),
             Configuration::Collections(_) => Err(Error::TemplateIsInvalid),
         }
     }
