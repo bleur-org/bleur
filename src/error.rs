@@ -72,10 +72,7 @@ pub enum BleurError {
     Unknown,
 }
 
-pub fn beautiful_exit<T>(message: T) -> !
-where
-    T: AsRef<str>,
-{
+pub fn beautiful_exit<T: AsRef<str>>(message: T) -> ! {
     eprintln!("{} {}", "error:".red(), message.as_ref());
 
     std::process::exit(1)
