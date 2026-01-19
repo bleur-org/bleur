@@ -6,6 +6,8 @@ use crate::{Error, Result};
 use std::fs;
 use std::path::PathBuf;
 
+static MAX_COLLECTIONS_DEPTH: u8 = 5;
+
 #[derive(Debug, Default, Clone)]
 pub enum Configuration {
     // If repo is a single template
@@ -44,8 +46,12 @@ impl Configuration {
         Self::Empty
     }
 
-    pub fn surely_template(path: PathBuf) -> Result<Self> {
+    pub fn surely_template(path: PathBuf, depth: u8) -> Result<Self> {
         use Configuration::*;
+
+        if depth > MAX_COLLECTIONS_DEPTH {
+            return Err(Error::AintNoWayThisDeepCollection(depth));
+        }
 
         match Self::parse(path.clone()) {
             Template(t) => Ok(Self::Template(t)),
@@ -60,7 +66,7 @@ impl Configuration {
 
                 let option = c.select(option).ok_or(Error::NoSuchTemplateInCollection)?;
 
-                Self::surely_template(option.path(path))
+                Self::surely_template(option.path(path), depth + 1)
             }
         }
     }

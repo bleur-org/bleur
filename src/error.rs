@@ -63,6 +63,8 @@ pub enum BleurError {
     InvalidRepositoryName(String),
     #[error("git error: {0}")]
     GitError(git2::Error),
+    #[error("brotha, what on earth makes you want collection more than {0} depths?")]
+    AintNoWayThisDeepCollection(u8),
 
     // To be used only if you get despaired.
     // Until so, don't touch, for the sake of your own sanity!
