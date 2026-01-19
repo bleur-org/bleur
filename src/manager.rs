@@ -1,5 +1,3 @@
-use std::{collections::HashMap, path::PathBuf, sync::LazyLock};
-
 use crate::{
     method::{Fetchable, Method, Methodical},
     schemes::Configuration,
@@ -7,6 +5,8 @@ use crate::{
 };
 use dircpy::CopyBuilder;
 use regex::{Regex, RegexBuilder};
+use std::path::Path;
+use std::{collections::HashMap, fs, path::PathBuf, sync::LazyLock};
 use tempfile::{tempdir, TempDir};
 use url::Url;
 
@@ -137,6 +137,10 @@ impl Manager {
     }
 
     pub fn recursively_copy(self, destination: PathBuf) -> Result<Self> {
+        if !Path::new(&destination).exists() {
+            fs::create_dir_all(&destination)?
+        }
+
         CopyBuilder::new(self.template.clone().template()?.path(), destination)
             .overwrite(true)
             .overwrite_if_newer(true)
