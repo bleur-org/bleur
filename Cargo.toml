@@ -1,0 +1,40 @@
+[package]
+name = "bleur"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+homepage = "https://bleur.net"
+repository = "https://github.com/bleur-org/templates"
+description = "My very awesome rust project"
+authors = ["Bleur Developers"]
+
+# Dependencies that will included with final binary
+[dependencies]
+owo-colors = { version = "4.2.2", default-features = false, features = [
+  "supports-colors",
+] }
+clap = { version = "4.5.40", features = ["derive", "color", "std"] }
+reqwest = { version = "0.13", features = ["stream", "blocking", "rustls"] }
+serde = { version = "1.0.219", features = ["derive"] }
+tempfile = "3.20.0"
+thiserror = "2.0.12"
+toml = "0.8.23"
+url = { version = "2.5.4", default-features = false, features = ["serde"] }
+which = "8.0.0"
+serde_json = "1.0.141"
+git2 = "0.20.2"
+tokio-stream = { version = "0.1.17", features = ["full"] }
+zip = "4.3.0"
+inquire = {version = "0.9.1", features = ["editor"]}
+dircpy = "0.3.19"
+regex = "1.12.2"
+
+# Development dependencies which aren't used in release binary
+[dev-dependencies]
+
+# Optimize release binary as much as possible
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+codegen-units = 1
