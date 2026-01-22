@@ -37,10 +37,7 @@ impl ManageBuilder {
         })
     }
 
-    pub fn source<T>(self, url: T) -> Result<Self>
-    where
-        T: AsRef<str>,
-    {
+    pub fn source<T: AsRef<str>>(self, url: T) -> Result<Self> {
         Ok(Self {
             temporary: self.temporary,
             method: self.method,
@@ -51,10 +48,7 @@ impl ManageBuilder {
         })
     }
 
-    pub fn fetch_method<T>(self, method: T) -> Result<Self>
-    where
-        T: Methodical,
-    {
+    pub fn fetch_method<T: Methodical>(self, method: T) -> Result<Self> {
         if self.temporary.is_none() || self.remote.is_none() {
             return Err(Error::InsufficientArgumentsToDecide);
         }
@@ -153,17 +147,12 @@ impl Manager {
 
 /// For HashMap to implement string search
 pub trait Glubtastic {
-    fn globs<T>(&self, text: T) -> Vec<String>
-    where
-        T: AsRef<str>;
+    fn globs<T: AsRef<str>>(&self, text: T) -> Vec<String>;
 }
 
 impl Glubtastic for HashMap<String, String> {
     /// Catch all @variable@ references within a string
-    fn globs<T>(&self, text: T) -> Vec<String>
-    where
-        T: AsRef<str>,
-    {
+    fn globs<T: AsRef<str>>(&self, text: T) -> Vec<String> {
         REGEX
             .captures_iter(text.as_ref())
             .map(|caps| {

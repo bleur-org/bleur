@@ -9,10 +9,7 @@ enum Instructions {
     Unknown,
 }
 
-impl<T> From<T> for Instructions
-where
-    T: ToString,
-{
+impl<T: ToString> From<T> for Instructions {
     fn from(value: T) -> Self {
         match value.to_string().to_lowercase().as_str() {
             "uppercase" => Self::Uppercase,
@@ -25,10 +22,7 @@ where
 pub struct Apply(Vec<Instructions>);
 
 impl Apply {
-    pub fn parse<T>(input: T) -> Apply
-    where
-        T: ToString,
-    {
+    pub fn parse<T: ToString>(input: T) -> Apply {
         Apply(
             input
                 .to_string()
@@ -38,10 +32,7 @@ impl Apply {
         )
     }
 
-    pub fn execute<T>(&self, input: T) -> String
-    where
-        T: ToString,
-    {
+    pub fn execute<T: ToString>(&self, input: T) -> String {
         self.0.iter().fold(
             input.to_string(),
             |current, instruction| match instruction {
